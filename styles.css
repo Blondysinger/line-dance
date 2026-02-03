@@ -77,6 +77,19 @@ button.ghost{
   background: rgba(16,24,38,.65);
 }
 button:hover{ filter:brightness(1.1); }
+.btnLink{
+  height:38px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background: rgba(16,24,38,.65);
+  color:var(--text);
+  padding:0 12px;
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+  font-size:13px;
+}
+.btnLink:hover{ filter:brightness(1.1); }
 
 .layout{
   display:grid;
