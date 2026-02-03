@@ -55,9 +55,24 @@
         </div>
 
         <div class="detailGrid">
-          <div class="card">
-            <div class="cardTitle">YouTube</div>
-            <iframe id="ytFrame" class="frame" title="YouTube video"
+          <div class="card videoCard">
+            <div class="cardTitle cardTitleRow">
+              <span>YouTube</span>
+              <div class="videoControls">
+                <button id="ytStartBtn" class="iconBtn" type="button" aria-label="Riproduci dall'inizio" title="Riproduci dall'inizio">
+                  <svg class="icon iconFill" viewBox="0 0 24 24" aria-hidden="true">
+                    <polygon points="8,6 19,12 8,18"></polygon>
+                  </svg>
+                </button>
+                <button id="ytDanceBtn" class="iconBtn" type="button" aria-label="Riproduci parte ballata" title="Riproduci parte ballata">
+                  <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="4.5" r="2.5"></circle>
+                    <path d="M12 7.5l-1 5-3 2.5M12 7.5l4 2.5M11 12.5l-5 7M12 12.5l4.5 6.5"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <iframe id="ytFrame" class="frame videoFrame" title="YouTube video"
               loading="lazy"
               referrerpolicy="strict-origin-when-cross-origin"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -28,6 +28,18 @@ function makeYouTubeEmbedUrl(queryOrUrl){
   return `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(v)}`;
 }
 
+function withYouTubeStart(url, startSeconds){
+  const seconds = Number(startSeconds);
+  if(!url || !Number.isFinite(seconds) || seconds <= 0) return url;
+  try{
+    const u = new URL(url);
+    u.searchParams.set("start", Math.floor(seconds));
+    return u.toString();
+  }catch{
+    return url;
+  }
+}
+
 function makeSpotifyEmbedOrNull(urlOrUri){
   const v = safe(urlOrUri);
   if(!v) return null;
@@ -191,6 +203,17 @@ function renderDetail(it){
   const ytEmbed = makeYouTubeEmbedUrl(ytValue || fallbackQuery);
   $("ytFrame").src = ytEmbed;
 
+  const startBtn = $("ytStartBtn");
+  const danceBtn = $("ytDanceBtn");
+  if(startBtn && danceBtn){
+    const startSeconds = Number(it.youtubeStartSeconds || it.youtubeStart || 0);
+    const danceSeconds = Number(it.youtubeDanceStartSeconds || it.youtubeDanceStart || startSeconds || 0);
+    startBtn.dataset.base = ytEmbed;
+    startBtn.dataset.start = Number.isFinite(startSeconds) ? String(startSeconds) : "0";
+    danceBtn.dataset.base = ytEmbed;
+    danceBtn.dataset.start = Number.isFinite(danceSeconds) ? String(danceSeconds) : "0";
+  }
+
   const ytLink = $("ytSearchLink");
   if(/^https?:\/\//i.test(ytValue)){
     ytLink.href = ytValue;
@@ -252,6 +275,25 @@ function wireKeyboardNav(){
   });
 }
 
+function wireYouTubeButtons(){
+  const startBtn = $("ytStartBtn");
+  const danceBtn = $("ytDanceBtn");
+  const frame = $("ytFrame");
+  if(!startBtn || !danceBtn || !frame) return;
+
+  startBtn.addEventListener("click", ()=>{
+    const base = startBtn.dataset.base || "";
+    const start = startBtn.dataset.start || "0";
+    if(base) frame.src = withYouTubeStart(base, start);
+  });
+
+  danceBtn.addEventListener("click", ()=>{
+    const base = danceBtn.dataset.base || "";
+    const start = danceBtn.dataset.start || "0";
+    if(base) frame.src = withYouTubeStart(base, start);
+  });
+}
+
 async function init(){
   const res = await fetch("./data.json", {cache:"no-store"});
   if(!res.ok) throw new Error("Impossibile caricare data.json");
@@ -287,6 +329,7 @@ async function init(){
   $("countLabel").textContent = `${state.filtered.length} risultati`;
   renderList();
   wireKeyboardNav();
+  wireYouTubeButtons();
 }
 
 init().catch(err=>{
