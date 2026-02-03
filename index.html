@@ -116,5 +116,14 @@
   </main>
 
   <script src="./app.js" defer></script>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    (function(){
+      const hash = window.location.hash || "";
+      if(/recovery_token|invite_token|confirmation_token/.test(hash)){
+        window.location.href = "/admin/" + hash;
+      }
+    })();
+  </script>
 </body>
 </html>
