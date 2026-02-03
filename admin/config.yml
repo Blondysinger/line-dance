@@ -1,0 +1,36 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "dances"
+    label: "Balli"
+    files:
+      - name: "catalog"
+        label: "Catalogo"
+        file: "data.json"
+        format: "json"
+        fields:
+          - label: "Balli"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.dance}}"
+            fields:
+              - { label: "ID", name: "id", widget: "number", value_type: "int", required: true }
+              - { label: "Anno", name: "year", widget: "number", required: false }
+              - { label: "Ballo", name: "dance", widget: "string", required: false }
+              - { label: "Stile", name: "style", widget: "string", required: false }
+              - { label: "Brano", name: "songTitle", widget: "string", required: false }
+              - { label: "Spotify URL", name: "spotifyUrl", widget: "string", required: false }
+              - { label: "Video Title", name: "videoTitle", widget: "string", required: false }
+              - { label: "YouTube URL", name: "youtubeUrl", widget: "string", required: false }
+              - { label: "Dettagli", name: "details", widget: "text", required: false }
+              - { label: "Note", name: "notes", widget: "text", required: false }
+              - { label: "Coreografo", name: "choreographer", widget: "string", required: false }
+              - { label: "Stepsheet Title", name: "stepsheetTitle", widget: "string", required: false }
+              - { label: "Stepsheet URL", name: "stepsheetUrl", widget: "string", required: false }
+              - { label: "YouTube Start (sec)", name: "youtubeStartSeconds", widget: "number", required: false, value_type: "int" }
+              - { label: "YouTube Dance Start (sec)", name: "youtubeDanceStartSeconds", widget: "number", required: false, value_type: "int" }
