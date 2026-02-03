@@ -152,15 +152,6 @@ button:hover{ filter:brightness(1.1); }
 }
 
 .detail{ padding:14px; }
-.empty{
-  border:1px dashed rgba(231,236,244,.22);
-  border-radius: var(--radius2);
-  padding:18px;
-  background: rgba(15,22,35,.55);
-}
-.empty h2{ margin:0 0 6px; font-size:18px; }
-.empty p{ margin:0; color:var(--muted); }
-
 .detailView.hidden{ display:none; }
 .detailTop{
   display:flex;
@@ -201,7 +192,7 @@ button:hover{ filter:brightness(1.1); }
 
 .detailGrid{
   display:grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1.1fr 1fr 1fr;
   gap:12px;
 }
 .card{
@@ -261,7 +252,13 @@ button:hover{ filter:brightness(1.1); }
   background: #000;
 }
 .videoFrame{
-  min-height: clamp(220px, 40vw, 560px);
+  min-height: clamp(220px, 22vw, 360px);
+}
+body.videoExpanded .detailGrid{
+  grid-template-columns: 1fr;
+}
+body.videoExpanded .videoFrame{
+  min-height: clamp(260px, 40vw, 560px);
 }
 .cardFooter{
   padding:10px 12px;
@@ -321,13 +318,6 @@ button:hover{ filter:brightness(1.1); }
   color:rgba(169,180,199,.78);
 }
 .smallPrint code{ font-family:var(--mono); color:#c9d4ea; }
-
-.footer{
-  padding:14px;
-  text-align:center;
-  color:rgba(169,180,199,.7);
-  font-size:12px;
-}
 
 @media (max-width: 1050px){
   .layout{ grid-template-columns: 1fr; }

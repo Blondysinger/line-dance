@@ -153,7 +153,6 @@ function clearSelection(){
   state.selectedId = null;
   state.cursorIndex = -1;
   $("detailView").classList.add("hidden");
-  $("emptyState").classList.remove("hidden");
   // reset aria-selected
   document.querySelectorAll(".listItem").forEach(el=> el.setAttribute("aria-selected","false"));
 }
@@ -171,7 +170,6 @@ function selectById(id, index){
 }
 
 function renderDetail(it){
-  $("emptyState").classList.add("hidden");
   $("detailView").classList.remove("hidden");
 
   const dance = safe(it.dance);
@@ -278,8 +276,9 @@ function wireKeyboardNav(){
 function wireYouTubeButtons(){
   const startBtn = $("ytStartBtn");
   const danceBtn = $("ytDanceBtn");
+  const sizeBtn = $("ytSizeToggleBtn");
   const frame = $("ytFrame");
-  if(!startBtn || !danceBtn || !frame) return;
+  if(!startBtn || !danceBtn || !sizeBtn || !frame) return;
 
   startBtn.addEventListener("click", ()=>{
     const base = startBtn.dataset.base || "";
@@ -291,6 +290,11 @@ function wireYouTubeButtons(){
     const base = danceBtn.dataset.base || "";
     const start = danceBtn.dataset.start || "0";
     if(base) frame.src = withYouTubeStart(base, start);
+  });
+
+  sizeBtn.addEventListener("click", ()=>{
+    const isExpanded = document.body.classList.toggle("videoExpanded");
+    sizeBtn.setAttribute("aria-pressed", isExpanded ? "true" : "false");
   });
 }
 
@@ -334,8 +338,16 @@ async function init(){
 
 init().catch(err=>{
   console.error(err);
-  $("emptyState").innerHTML = `
-    <h2>Errore</h2>
-    <p class="muted">Non riesco a caricare <code>data.json</code>. Apri la console per dettagli.</p>
-  `;
+  const detail = $("detailView");
+  if(detail){
+    detail.classList.remove("hidden");
+    detail.innerHTML = `
+      <div class="card">
+        <div class="cardTitle">Errore</div>
+        <div class="textBlock">
+          <p class="muted">Non riesco a caricare <code>data.json</code>. Apri la console per dettagli.</p>
+        </div>
+      </div>
+    `;
+  }
 });

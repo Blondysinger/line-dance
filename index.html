@@ -8,13 +8,12 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">
-      <div class="logo">LD</div>
-      <div>
-        <h1>Line Dance Catalog</h1>
-        <p class="subtitle">Master–detail + ricerca • dati da <code>data.json</code></p>
+      <div class="brand">
+        <div class="logo">LD</div>
+        <div>
+          <h1>Line Dance Catalog</h1>
+        </div>
       </div>
-    </div>
 
     <div class="actions">
       <input id="searchInput" type="search" placeholder="Cerca… (ballo, brano, note, dettagli)" autocomplete="off" />
@@ -35,11 +34,6 @@
     </section>
 
     <section class="detail" aria-label="Dettaglio selezione">
-      <div id="emptyState" class="empty">
-        <h2>Seleziona un ballo</h2>
-        <p>Usa l’elenco a sinistra o la ricerca. Il dettaglio apparirà qui.</p>
-      </div>
-
       <div id="detailView" class="detailView hidden">
         <div class="detailTop">
           <div>
@@ -68,6 +62,11 @@
                   <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="4.5" r="2.5"></circle>
                     <path d="M12 7.5l-1 5-3 2.5M12 7.5l4 2.5M11 12.5l-5 7M12 12.5l4.5 6.5"></path>
+                  </svg>
+                </button>
+                <button id="ytSizeToggleBtn" class="iconBtn" type="button" aria-label="Espandi o riduci video" title="Espandi o riduci video" aria-pressed="false">
+                  <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 10V4h6M20 14v6h-6M14 4h6v6M4 20h6v-6"></path>
                   </svg>
                 </button>
               </div>
@@ -111,16 +110,9 @@
           </div>
         </div>
 
-        <div class="smallPrint">
-          <span>Tip: se vuoi embed Spotify vero, nel dataset salva un link tipo <code>https://open.spotify.com/track/...</code>.</span>
-        </div>
       </div>
     </section>
   </main>
-
-  <footer class="footer">
-    <span>Prototype • Static SPA (HTML/CSS/JS)</span>
-  </footer>
 
   <script src="./app.js" defer></script>
 </body>
