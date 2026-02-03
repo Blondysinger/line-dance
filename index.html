@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Line Dance Catalog</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">LD</div>
+      <div>
+        <h1>Line Dance Catalog</h1>
+        <p class="subtitle">Master–detail + ricerca • dati da <code>data.json</code></p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <input id="searchInput" type="search" placeholder="Cerca… (ballo, brano, note, dettagli)" autocomplete="off" />
+      <select id="yearFilter" aria-label="Filtro anno">
+        <option value="">Tutti gli anni</option>
+      </select>
+      <button id="clearBtn" class="ghost" title="Pulisci ricerca">Pulisci</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="master" aria-label="Elenco balli">
+      <div class="masterHeader">
+        <div class="count"><span id="countLabel">—</span></div>
+        <div class="hint">Suggerimento: ↑ ↓ per navigare, Invio per selezionare</div>
+      </div>
+      <ul id="list" class="list" role="listbox" aria-label="Ballo/brano"></ul>
+    </section>
+
+    <section class="detail" aria-label="Dettaglio selezione">
+      <div id="emptyState" class="empty">
+        <h2>Seleziona un ballo</h2>
+        <p>Usa l’elenco a sinistra o la ricerca. Il dettaglio apparirà qui.</p>
+      </div>
+
+      <div id="detailView" class="detailView hidden">
+        <div class="detailTop">
+          <div>
+            <h2 id="detailTitle">—</h2>
+            <div class="meta">
+              <span class="pill" id="detailYear">Anno —</span>
+              <span class="pill" id="detailStyle">—</span>
+            </div>
+          </div>
+          <div class="links">
+            <a id="stepsheetLink" class="ghostLink" target="_blank" rel="noopener">Stepsheet</a>
+          </div>
+        </div>
+
+        <div class="detailGrid">
+          <div class="card">
+            <div class="cardTitle">YouTube</div>
+            <iframe id="ytFrame" class="frame" title="YouTube video"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+            <div class="cardFooter">
+              <a id="ytSearchLink" target="_blank" rel="noopener">Apri ricerca su YouTube</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="cardTitle">Spotify</div>
+            <div id="spotifyContainer" class="spotifyContainer">
+              <div class="spotifyPlaceholder">
+                <p><strong>Embed non disponibile</strong> (manca un link/URI Spotify nel dataset).</p>
+                <p>Intanto ti apro la ricerca su Spotify col nome brano.</p>
+                <a id="spSearchLink" class="primaryLink" target="_blank" rel="noopener">Cerca su Spotify</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="cardTitle">Dettagli & Note</div>
+            <div class="textBlock">
+              <h3>Brano</h3>
+              <p id="detailSong">—</p>
+
+              <h3>Details</h3>
+              <pre id="detailDetails" class="pre">—</pre>
+
+              <h3>Notes</h3>
+              <pre id="detailNotes" class="pre muted">—</pre>
+
+              <h3>Coreografia di</h3>
+              <p id="detailChoreo" class="muted">—</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="smallPrint">
+          <span>Tip: se vuoi embed Spotify vero, nel dataset salva un link tipo <code>https://open.spotify.com/track/...</code>.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Prototype • Static SPA (HTML/CSS/JS)</span>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
