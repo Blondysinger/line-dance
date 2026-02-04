@@ -25,7 +25,7 @@ body{
 
 .adminTopbar{
   position:sticky; top:0; z-index:10;
-  padding:14px 16px;
+  padding:10px 12px;
   border-bottom:1px solid var(--border);
   backdrop-filter: blur(10px);
   background: rgba(11,15,23,.72);
@@ -36,8 +36,13 @@ body{
   flex-wrap:wrap;
 }
 .adminBrand{ display:flex; gap:12px; align-items:center; }
+.adminBrand h1{
+  margin:0;
+  font-size:18px;
+  letter-spacing:.2px;
+}
 .adminLogo{
-  width:42px; height:42px;
+  width:34px; height:34px;
   border-radius:14px;
   display:grid; place-items:center;
   background: linear-gradient(135deg, rgba(122,162,255,.35), rgba(52,211,153,.18));
@@ -49,20 +54,25 @@ body{
 .adminActions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 
 .primaryBtn, .ghostBtn{
-  height:38px;
-  border-radius:14px;
+  height:32px;
+  border-radius:12px;
   border:1px solid var(--border);
   background: rgba(16,24,38,.65);
   color:var(--text);
-  padding:0 12px;
+  padding:0 10px;
   cursor:pointer;
   font-family:var(--sans);
-  font-size:13px;
+  font-size:12px;
   text-decoration:none;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   line-height:1;
+}
+.iconOnly{
+  width:30px;
+  padding:0;
+  font-size:16px;
 }
 .primaryBtn{ background: rgba(52,211,153,.18); border-color: rgba(52,211,153,.22); }
 .ghostBtn:hover,.primaryBtn:hover{ filter:brightness(1.08); }
@@ -75,6 +85,8 @@ body{
   padding:14px;
   max-width: 1400px;
   margin: 0 auto;
+  height: calc(100vh - 84px);
+  overflow: hidden;
 }
 .adminList,.adminDetail{
   background: rgba(16,24,38,.55);
@@ -101,27 +113,57 @@ body{
   padding:0 10px;
   outline:none;
 }
-.countLabel{ font-size:12px; color:var(--muted); }
+.countLabel{ font-size:12px; color:var(--muted); min-width:40px; }
 
 .list{
   margin:0; padding:0;
   list-style:none;
-  max-height: calc(100vh - 170px);
+  height: calc(100% - 56px);
   overflow:auto;
 }
 .listItem{
   padding:10px 12px;
   border-bottom:1px solid rgba(231,236,244,.06);
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.listItem[draggable="true"]{ cursor:grab; }
+.listItem.dragging{ opacity:.5; }
+.listItem.dragOver{
+  outline:2px dashed rgba(122,162,255,.45);
+  outline-offset:-2px;
 }
 .listItem:hover{ background: rgba(122,162,255,.08); }
 .listItem.active{ background: rgba(52,211,153,.10); }
+.listTitle{ min-width:0; flex:1; }
+.deleteBtn{
+  height:26px;
+  padding:0 8px;
+  border-radius:10px;
+  border:1px solid rgba(248,113,113,.35);
+  background: rgba(248,113,113,.18);
+  color:#ffd1d1;
+  font-size:12px;
+  cursor:pointer;
+  opacity:0;
+  transition: opacity .12s ease;
+}
+.listItem:hover .deleteBtn{ opacity:1; }
 
-.adminDetail{ padding:12px; display:flex; flex-direction:column; gap:12px; }
+.adminDetail{
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow:auto;
+}
 .formGrid{
   display:grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:10px;
+  gap:8px;
 }
 .formGrid label{
   font-size:12px;
@@ -139,13 +181,16 @@ body{
   outline:none;
   font-family:var(--sans);
 }
-.formGrid textarea{ resize:vertical; min-height:120px; }
+.formGrid textarea{ resize:vertical; min-height:80px; }
 
 .jsonPanel{
   border:1px solid var(--border);
   border-radius: var(--radius2);
   background: rgba(15,22,35,.55);
   overflow:hidden;
+  flex:1;
+  display:flex;
+  flex-direction:column;
 }
 .jsonHeader{
   display:flex;
@@ -157,7 +202,7 @@ body{
 }
 .jsonEditor{
   width:100%;
-  height:260px;
+  height:100%;
   border:0;
   background: transparent;
   color:var(--text);
@@ -180,6 +225,9 @@ body{
 }
 
 @media (max-width: 980px){
-  .adminLayout{ grid-template-columns: 1fr; }
+  .adminLayout{
+    grid-template-columns: 1fr;
+    height: calc(100vh - 120px);
+  }
   .formGrid{ grid-template-columns: 1fr; }
 }

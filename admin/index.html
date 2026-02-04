@@ -27,8 +27,9 @@
   <main class="adminLayout hidden" id="adminContent">
     <section class="adminList" aria-label="Elenco balli">
       <div class="adminListHeader">
-        <input id="searchInput" type="search" placeholder="Cerca..." autocomplete="off" />
         <span id="countLabel" class="countLabel">—</span>
+        <input id="searchInput" type="search" placeholder="Cerca..." autocomplete="off" />
+        <button id="addBtn" class="ghostBtn iconOnly" type="button" aria-label="Aggiungi">+</button>
       </div>
       <ul id="list" class="list"></ul>
     </section>
@@ -36,16 +37,16 @@
     <section class="adminDetail" aria-label="Dettaglio">
       <div class="formGrid" id="formPanel">
         <label>Nome ballo
-          <input id="dance" type="text" />
+          <input id="dance" type="text" placeholder="Es. ELECTRIC SLIDE" />
         </label>
         <label>Brano
-          <input id="songTitle" type="text" />
+          <input id="songTitle" type="text" placeholder="Es. Achy Breaky Heart" />
         </label>
         <label>Stile
-          <input id="style" type="text" />
+          <input id="style" type="text" placeholder="Es. Line / Contra / Couple" />
         </label>
         <label>Anno / Livello
-          <input id="year" type="text" />
+          <input id="year" type="text" placeholder="Es. 1, 2, ADV, Master" />
         </label>
         <label>YouTube URL
           <input id="youtubeUrl" type="text" />
@@ -79,10 +80,9 @@
         </label>
       </div>
 
-      <div class="jsonPanel">
+      <div class="jsonPanel hidden" id="jsonPanel">
         <div class="jsonHeader">
           <span>JSON completo</span>
-          <button id="toggleJsonPanel" class="ghostBtn" type="button">Mostra/Nascondi</button>
         </div>
         <textarea id="jsonEditor" class="jsonEditor" spellcheck="false"></textarea>
       </div>

@@ -4,6 +4,7 @@ const state = {
   selectedIndex: -1,
   jsonOnly: false,
 };
+let dragItemId = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -23,8 +24,47 @@ function renderList(){
   state.filtered.forEach((it, idx)=>{
     const li = document.createElement("li");
     li.className = "listItem" + (idx === state.selectedIndex ? " active" : "");
-    li.textContent = safe(it.dance) || "(senza titolo)";
+    li.setAttribute("draggable", "true");
+    li.dataset.id = safe(it.id);
+    const title = document.createElement("span");
+    title.className = "listTitle";
+    title.textContent = safe(it.dance) || "(senza titolo)";
+    const del = document.createElement("button");
+    del.className = "deleteBtn";
+    del.type = "button";
+    del.textContent = "Elimina";
+    del.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      confirmDelete(idx);
+    });
+    li.appendChild(title);
+    li.appendChild(del);
     li.addEventListener("click", ()=> selectIndex(idx));
+    li.addEventListener("dragstart", (e)=> {
+      dragItemId = li.dataset.id;
+      li.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", dragItemId);
+    });
+    li.addEventListener("dragend", ()=> {
+      dragItemId = null;
+      li.classList.remove("dragging");
+      list.querySelectorAll(".dragOver").forEach(el => el.classList.remove("dragOver"));
+    });
+    li.addEventListener("dragover", (e)=> {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      li.classList.add("dragOver");
+    });
+    li.addEventListener("dragleave", ()=> li.classList.remove("dragOver"));
+    li.addEventListener("drop", (e)=> {
+      e.preventDefault();
+      li.classList.remove("dragOver");
+      const targetId = li.dataset.id;
+      const fromId = dragItemId || e.dataTransfer.getData("text/plain");
+      if(!fromId || !targetId || fromId === targetId) return;
+      moveItemById(fromId, targetId);
+    });
     list.appendChild(li);
   });
   $("countLabel").textContent = `${state.filtered.length}`;
@@ -51,7 +91,7 @@ function selectIndex(idx){
   $("notes").value = safe(it.notes);
 }
 
-function applyFilters(){
+function applyFilters(opts = {}){
   const q = safe($("searchInput").value).toLowerCase().trim();
   if(!q){
     state.filtered = [...state.items];
@@ -65,6 +105,13 @@ function applyFilters(){
     });
   }
   if(state.filtered.length > 0){
+    if(opts.selectId != null){
+      const idx = state.filtered.findIndex(it => safe(it.id) === safe(opts.selectId));
+      if(idx >= 0){
+        selectIndex(idx);
+        return;
+      }
+    }
     selectIndex(0);
   } else {
     state.selectedIndex = -1;
@@ -92,6 +139,53 @@ function updateItemFromForm(){
 
   renderList();
   syncJsonEditor();
+}
+
+function addItem(){
+  const maxId = state.items.reduce((m, it)=> Math.max(m, Number(it.id) || 0), 0);
+  const nextId = maxId + 1;
+  const blank = {
+    id: nextId,
+    year: "",
+    dance: "",
+    style: "",
+    songTitle: "",
+    spotifyUrl: "",
+    videoTitle: "",
+    youtubeUrl: "",
+    details: "",
+    notes: "",
+    choreographer: "",
+    stepsheetTitle: "",
+    stepsheetUrl: "",
+    youtubeStartSeconds: "",
+    youtubeDanceStartSeconds: "",
+  };
+  state.items.push(blank);
+  applyFilters({ selectId: nextId });
+  toast("Nuovo ballo creato");
+}
+
+function confirmDelete(idx){
+  const it = state.filtered[idx];
+  if(!it) return;
+  const name = safe(it.dance) || "(senza titolo)";
+  if(!confirm(`Eliminare "${name}"?`)) return;
+  const id = it.id;
+  state.items = state.items.filter(x => x.id !== id);
+  applyFilters();
+  toast("Ballo eliminato");
+}
+
+function moveItemById(fromId, targetId){
+  const fromIdx = state.items.findIndex(it => safe(it.id) === safe(fromId));
+  const toIdx = state.items.findIndex(it => safe(it.id) === safe(targetId));
+  if(fromIdx === -1 || toIdx === -1) return;
+  const [moved] = state.items.splice(fromIdx, 1);
+  const insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
+  state.items.splice(insertIdx, 0, moved);
+  applyFilters({ selectId: fromId });
+  toast("Ordine aggiornato");
 }
 
 function syncJsonEditor(){
@@ -158,7 +252,7 @@ async function saveData(){
 function setJsonOnly(on){
   state.jsonOnly = on;
   $("formPanel").style.display = on ? "none" : "grid";
-  $("list").closest(".adminList").style.display = on ? "none" : "block";
+  $("jsonPanel").classList.toggle("hidden", !on);
   $("toggleJsonOnly").textContent = on ? "Vista completa" : "Solo JSON";
 }
 
@@ -203,12 +297,9 @@ function wireIdentity(){
 function init(){
   wireIdentity();
   $("searchInput").addEventListener("input", applyFilters);
+  $("addBtn").addEventListener("click", addItem);
   $("toggleJsonOnly").addEventListener("click", ()=>{
     setJsonOnly(!state.jsonOnly);
-  });
-  $("toggleJsonPanel").addEventListener("click", ()=>{
-    const editor = $("jsonEditor");
-    editor.style.display = editor.style.display === "none" ? "block" : "none";
   });
   $("saveBtn").addEventListener("click", saveData);
   [
