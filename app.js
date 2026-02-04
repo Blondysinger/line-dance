@@ -382,10 +382,32 @@ function wireStepsheetModal(){
   });
 }
 
+async function getDataMode(){
+  try{
+    const res = await fetch("./data-mode.json", {cache:"no-store"});
+    if(res.ok){
+      const m = await res.json();
+      if(m && typeof m.mode === "string") return m.mode;
+    }
+  }catch(_e){}
+  return "remote";
+}
+
+async function loadData(){
+  const mode = await getDataMode();
+  if(mode === "local"){
+    const res = await fetch("./data.json", {cache:"no-store"});
+    if(!res.ok) throw new Error("Impossibile caricare data.json");
+    return await res.json();
+  }
+
+  const res = await fetch("/.netlify/functions/dances", {cache:"no-store"});
+  if(!res.ok) throw new Error("Impossibile caricare dati dal DB remoto");
+  return await res.json();
+}
+
 async function init(){
-  const res = await fetch("./data.json", {cache:"no-store"});
-  if(!res.ok) throw new Error("Impossibile caricare data.json");
-  const data = await res.json();
+  const data = await loadData();
 
   state.items = (Array.isArray(data) ? data : (data.items || [])).map(x=>({
     ...x,

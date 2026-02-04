@@ -30,10 +30,9 @@ Static SPA (HTML/CSS/JS) basata su un dataset JSON generato dal CSV.
 ### SPA routing
 Questa SPA usa solo un’unica pagina e non richiede redirect speciali.
 
-## Aggiornare i dati via browser (Decap CMS)
-Questa repo include la sezione `/admin` per modificare `data.json` tramite Decap CMS.
-Quando salvi dal CMS, `data.json` viene salvato come oggetto con chiave `items`.
-La SPA gestisce sia il formato a lista che quello con `items`.
+## Aggiornare i dati via browser (Admin custom)
+La sezione `/admin` ora usa un editor custom con Netlify Identity
+che salva direttamente nel DB (Neon) tramite una function serverless.
 
 ### Setup su Netlify (Identity + Git Gateway)
 1. **Deploy** come sopra (build vuoto, publish `/`).
@@ -41,8 +40,39 @@ La SPA gestisce sia il formato a lista che quello con `items`.
 3. In Netlify: **Identity → Settings → Enable Git Gateway**.
 4. (Consigliato) In Identity: **Registration → Invite only**.
 5. Vai su `https://<tuo-sito>.netlify.app/admin` e fai login.
-6. Una volta dentro, modifica e salva: il CMS fa commit su GitHub e Netlify redeploya.
+6. Una volta dentro, modifica e salva: i dati vengono salvati su Neon.
 
 ### Note
-- Nessun token GitHub nel frontend: si usa Git Gateway di Netlify.
+- Nessun token nel frontend.
 - Se non vedi l’editor, verifica che Identity e Git Gateway siano abilitati.
+
+## Lettura dati da Neon (serverless)
+Se vuoi leggere i dati da Neon in produzione, usa la Function Netlify:
+- Endpoint: `/.netlify/functions/dances`
+- La SPA usa l’endpoint remoto in produzione.
+
+### Setup rapido
+1. In Netlify → **Site settings → Environment variables** aggiungi **una** delle seguenti:
+   - `NEON_DATABASE_URL` = connection string Neon (con `sslmode=require`)
+   - `NETLIFY_DATABASE_URL` = connection string Neon (se già creata automaticamente)
+2. Aggiungi:
+   - `DANCES_SQL` = query che ritorna un solo record con il JSON
+   - `DANCES_SQL_WRITE` = query di update per il salvataggio
+
+Esempio query:
+```
+select data as payload from line_dance_data limit 1;
+```
+Esempio write:
+```
+update line_dance_data set data = $1::jsonb
+```
+
+### Struttura suggerita nel DB
+Una tabella con una singola riga che contiene l’intero JSON:
+```
+create table line_dance_data (
+  id serial primary key,
+  data jsonb not null
+);
+```

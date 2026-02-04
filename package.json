@@ -1,0 +1,10 @@
+{
+  "name": "line-dance-catalog",
+  "private": true,
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.0"
+  }
+}

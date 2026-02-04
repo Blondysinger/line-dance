@@ -1,13 +1,96 @@
 <!doctype html>
 <html lang="it">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Line Dance Catalog Admin</title>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  </head>
-  <body>
-    <!-- Decap CMS -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Line Dance Admin</title>
+  <link rel="stylesheet" href="./admin.css" />
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+  <header class="adminTopbar">
+    <div class="adminBrand">
+      <div class="adminLogo">LD</div>
+      <div>
+        <h1>Admin Catalogo</h1>
+      </div>
+    </div>
+    <div class="adminActions">
+      <a class="ghostBtn" href="/" rel="noopener">Torna al sito</a>
+      <button id="toggleJsonOnly" class="ghostBtn" type="button">Solo JSON</button>
+      <button id="saveBtn" class="primaryBtn" type="button">Salva</button>
+      <button id="loginBtn" class="ghostBtn" type="button">Login</button>
+      <button id="logoutBtn" class="ghostBtn hidden" type="button">Logout</button>
+    </div>
+  </header>
+
+  <main class="adminLayout hidden" id="adminContent">
+    <section class="adminList" aria-label="Elenco balli">
+      <div class="adminListHeader">
+        <input id="searchInput" type="search" placeholder="Cerca..." autocomplete="off" />
+        <span id="countLabel" class="countLabel">—</span>
+      </div>
+      <ul id="list" class="list"></ul>
+    </section>
+
+    <section class="adminDetail" aria-label="Dettaglio">
+      <div class="formGrid" id="formPanel">
+        <label>Nome ballo
+          <input id="dance" type="text" />
+        </label>
+        <label>Brano
+          <input id="songTitle" type="text" />
+        </label>
+        <label>Stile
+          <input id="style" type="text" />
+        </label>
+        <label>Anno / Livello
+          <input id="year" type="text" />
+        </label>
+        <label>YouTube URL
+          <input id="youtubeUrl" type="text" />
+        </label>
+        <label>YouTube Start (sec)
+          <input id="youtubeStartSeconds" type="number" />
+        </label>
+        <label>YouTube Dance Start (sec)
+          <input id="youtubeDanceStartSeconds" type="number" />
+        </label>
+        <label>Spotify URL
+          <input id="spotifyUrl" type="text" />
+        </label>
+        <label>Stepsheet URL
+          <input id="stepsheetUrl" type="text" />
+        </label>
+        <label>Stepsheet Title
+          <input id="stepsheetTitle" type="text" />
+        </label>
+        <label>Video Title
+          <input id="videoTitle" type="text" />
+        </label>
+        <label>Coreografo
+          <input id="choreographer" type="text" />
+        </label>
+        <label>Dettagli
+          <textarea id="details" rows="6"></textarea>
+        </label>
+        <label>Note
+          <textarea id="notes" rows="6"></textarea>
+        </label>
+      </div>
+
+      <div class="jsonPanel">
+        <div class="jsonHeader">
+          <span>JSON completo</span>
+          <button id="toggleJsonPanel" class="ghostBtn" type="button">Mostra/Nascondi</button>
+        </div>
+        <textarea id="jsonEditor" class="jsonEditor" spellcheck="false"></textarea>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="./admin.js" defer></script>
+</body>
 </html>
