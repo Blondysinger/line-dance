@@ -45,7 +45,7 @@
             </div>
           </div>
           <div class="links">
-            <a id="stepsheetLink" class="ghostLink" target="_blank" rel="noopener">Stepsheet</a>
+            <a id="stepsheetLink" class="ghostLink" href="#" rel="noopener">Stepsheet</a>
           </div>
         </div>
 
@@ -82,31 +82,39 @@
             </div>
           </div>
 
-          <div class="card">
-            <div class="cardTitle">Spotify</div>
-            <div id="spotifyContainer" class="spotifyContainer">
-              <div class="spotifyPlaceholder">
-                <p><strong>Embed non disponibile</strong> (manca un link/URI Spotify nel dataset).</p>
-                <p>Intanto ti apro la ricerca su Spotify col nome brano.</p>
-                <a id="spSearchLink" class="primaryLink" target="_blank" rel="noopener">Cerca su Spotify</a>
+          <div class="sideColumn">
+            <div class="card spotifyCard">
+              <div class="cardTitle cardTitleRow">
+                <span>Spotify</span>
+                <span class="tooltipWrap" aria-hidden="true">
+                  <span class="helpDot">?</span>
+                  <span class="tooltipText">La riproduzione può variare in base all'account (Free/Premium) e alle policy di Spotify.</span>
+                </span>
+              </div>
+              <div id="spotifyContainer" class="spotifyContainer">
+                <div class="spotifyPlaceholder">
+                  <p><strong>Embed non disponibile</strong> (manca un link/URI Spotify nel dataset).</p>
+                  <p>Intanto ti apro la ricerca su Spotify col nome brano.</p>
+                  <a id="spSearchLink" class="primaryLink" target="_blank" rel="noopener">Cerca su Spotify</a>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="card">
-            <div class="cardTitle">Dettagli & Note</div>
-            <div class="textBlock">
-              <h3>Brano</h3>
-              <p id="detailSong">—</p>
+            <div class="card">
+              <div class="cardTitle">Dettagli & Note</div>
+              <div class="textBlock">
+                <h3>Brano</h3>
+                <p id="detailSong">—</p>
 
-              <h3>Details</h3>
-              <pre id="detailDetails" class="pre">—</pre>
+                <h3>Details</h3>
+                <pre id="detailDetails" class="pre">—</pre>
 
-              <h3>Notes</h3>
-              <pre id="detailNotes" class="pre muted">—</pre>
+                <h3>Notes</h3>
+                <pre id="detailNotes" class="pre muted">—</pre>
 
-              <h3>Coreografia di</h3>
-              <p id="detailChoreo" class="muted">—</p>
+                <h3>Coreografia di</h3>
+                <p id="detailChoreo" class="muted">—</p>
+              </div>
             </div>
           </div>
         </div>
@@ -116,6 +124,28 @@
   </main>
 
   <script src="./app.js" defer></script>
+  <div id="stepsheetModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Stepsheet">
+    <div class="modalBackdrop" data-close="true"></div>
+    <div class="modalPanel">
+      <div class="modalHeader">
+        <div class="modalTitle">Stepsheet</div>
+        <div class="modalActions">
+          <a id="stepsheetOpenNew" class="ghostLink" target="_blank" rel="noopener">Apri in nuova scheda</a>
+          <button id="stepsheetClose" class="iconBtn" type="button" aria-label="Chiudi">
+            <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6l-12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <iframe id="stepsheetFrame" class="modalFrame" title="Stepsheet"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <div class="modalFooter">
+        <span class="muted">Se il contenuto non si carica (blocco del sito), usa “Apri in nuova scheda”.</span>
+      </div>
+    </div>
+  </div>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
     (function(){

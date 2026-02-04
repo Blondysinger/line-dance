@@ -9,6 +9,7 @@ const state = {
   filtered: [],
   selectedId: null,
   cursorIndex: -1,
+  stepsheetUrl: "",
 };
 
 const $ = (id) => document.getElementById(id);
@@ -30,10 +31,15 @@ function makeYouTubeEmbedUrl(queryOrUrl){
 
 function withYouTubeStart(url, startSeconds){
   const seconds = Number(startSeconds);
-  if(!url || !Number.isFinite(seconds) || seconds <= 0) return url;
+  if(!url) return url;
   try{
     const u = new URL(url);
-    u.searchParams.set("start", Math.floor(seconds));
+    if(Number.isFinite(seconds) && seconds > 0){
+      u.searchParams.set("start", Math.floor(seconds));
+    } else {
+      u.searchParams.delete("start");
+    }
+    u.searchParams.set("autoplay", "1");
     return u.toString();
   }catch{
     return url;
@@ -44,8 +50,8 @@ function makeSpotifyEmbedOrNull(urlOrUri){
   const v = safe(urlOrUri);
   if(!v) return null;
 
-  // Accept open.spotify.com links: track/album/playlist/episode/show
-  const m = v.match(/open\.spotify\.com\/(track|album|playlist|episode|show)\/([a-zA-Z0-9]+)/);
+  // Accept open.spotify.com links: optional intl-xx prefix + track/album/playlist/episode/show
+  const m = v.match(/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?(track|album|playlist|episode|show)\/([a-zA-Z0-9]+)/i);
   if(m){
     const type = m[1];
     const id = m[2];
@@ -93,8 +99,10 @@ function applyFilters(){
 
   $("countLabel").textContent = `${state.filtered.length} risultati`;
   renderList();
-  // If selected item disappeared, reset selection
-  if(state.selectedId && !state.filtered.some(x=>x.id === state.selectedId)){
+  // Always select the first item after filtering/searching
+  if(state.filtered.length > 0){
+    selectById(state.filtered[0].id, 0);
+  } else {
     clearSelection();
   }
 }
@@ -190,9 +198,11 @@ function renderDetail(it){
   if(/^https?:\/\//i.test(stepsheet)){
     stepsheetLink.href = stepsheet;
     stepsheetLink.style.display = "inline-flex";
+    state.stepsheetUrl = stepsheet;
   } else {
     stepsheetLink.href = "#";
     stepsheetLink.style.display = "none";
+    state.stepsheetUrl = "";
   }
 
   // YouTube
@@ -298,6 +308,80 @@ function wireYouTubeButtons(){
   });
 }
 
+function wireStepsheetModal(){
+  const link = $("stepsheetLink");
+  const modal = $("stepsheetModal");
+  const frame = $("stepsheetFrame");
+  const closeBtn = $("stepsheetClose");
+  const openNew = $("stepsheetOpenNew");
+  if(!link || !modal || !frame || !closeBtn || !openNew) return;
+
+  function openModal(url){
+    if(!url) return;
+    frame.src = url;
+    openNew.href = url;
+    modal.classList.remove("hidden");
+  }
+  function closeModal(){
+    modal.classList.add("hidden");
+    frame.src = "about:blank";
+  }
+  function openPdfWindow(url){
+    if(!url) return;
+    const width = 1100;
+    const height = 760;
+    const left = Math.max(0, Math.floor((window.screen.width - width) / 2));
+    const top = Math.max(0, Math.floor((window.screen.height - height) / 2));
+    const features = [
+      "popup=yes",
+      "noopener",
+      "noreferrer",
+      "toolbar=no",
+      "menubar=no",
+      "location=no",
+      "status=no",
+      "scrollbars=yes",
+      "resizable=yes",
+      `width=${width}`,
+      `height=${height}`,
+      `left=${left}`,
+      `top=${top}`,
+    ].join(",");
+    const w = window.open(url, "stepsheetPdf", features);
+    if(w) w.focus();
+  }
+  function isPdfUrl(url){
+    try{
+      const u = new URL(url);
+      return u.pathname.toLowerCase().endsWith(".pdf");
+    }catch{
+      return url.toLowerCase().split("?")[0].endsWith(".pdf");
+    }
+  }
+
+  link.addEventListener("click", (e)=>{
+    if(!state.stepsheetUrl) return;
+    e.preventDefault();
+    if(isPdfUrl(state.stepsheetUrl)){
+      closeModal();
+      openPdfWindow(state.stepsheetUrl);
+      return;
+    }
+    openModal(state.stepsheetUrl);
+  });
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e)=>{
+    if(e.target && e.target.dataset && e.target.dataset.close){
+      closeModal();
+    }
+  });
+  document.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape" && !modal.classList.contains("hidden")){
+      closeModal();
+    }
+  });
+}
+
 async function init(){
   const res = await fetch("./data.json", {cache:"no-store"});
   if(!res.ok) throw new Error("Impossibile caricare data.json");
@@ -332,8 +416,12 @@ async function init(){
   state.filtered = [...state.items];
   $("countLabel").textContent = `${state.filtered.length} risultati`;
   renderList();
+  if(state.filtered.length > 0){
+    selectById(state.filtered[0].id, 0);
+  }
   wireKeyboardNav();
   wireYouTubeButtons();
+  wireStepsheetModal();
 }
 
 init().catch(err=>{

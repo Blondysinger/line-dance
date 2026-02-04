@@ -12,7 +12,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6aQDfnZZAxTEOnpuuljFYp?si=81f1ea0a26c845dc",
       "id": 1,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Achy Breaky Heart"
     },
     {
@@ -27,7 +27,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4Tb7lPR0Bu67oIrbKdhUGq?si=492f261d719b4a29",
       "id": 2,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Country as a boy"
     },
     {
@@ -42,7 +42,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4Ws5Bfp4MMsvsFSKj40U4Z?si=6b168fb0fb2a4d3d",
       "id": 3,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Got a feeling"
     },
     {
@@ -58,7 +58,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6NhpIdjYoufuNNlBsgOztc?si=2141c4a219aa4659",
       "id": 4,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Suds In The Bucket"
     },
     {
@@ -73,7 +73,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6VcQiDIUHcvFjKXb1vmeZV?si=843783e071e84c20",
       "id": 5,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Used to be Country Town"
     },
     {
@@ -88,7 +88,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/3zTvKhCuh44XlIFyi4G0Sp?si=3b9e72dbe85e40bc",
       "id": 6,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Runaround Sue"
     },
     {
@@ -103,12 +103,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7xKMmZ5S4z8YtATuzVYmpQ?si=9adae41c0c934f16",
       "id": 7,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "God blessed Texas"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 2\nRestart: 4 (5°-16t, 8°-20t, 13°-16t, 16°-16t)",
+      "details": "Tempi: 32\nMuri: 2\nRestart: 4 (5\u00b0-16t, 8\u00b0-20t, 13\u00b0-16t, 16\u00b0-16t)",
       "songTitle": "Take It Or Break It",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -118,7 +118,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1odLGWMpbBIAg0yCMFn43T?si=c7350fb4e6f4468c",
       "id": 8,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Take It Or Break It"
     },
     {
@@ -133,12 +133,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1aNv2vv4EqRyQ6eFdQDAsm?si=def77f4ca0634569",
       "id": 9,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Cherokee Boogie (Hey-ho-a-lina)"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (12°-16t)",
+      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (12\u00b0-16t)",
       "songTitle": "Ghost Town",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -148,7 +148,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/3VyaFDf706JddMz27syc2P?si=ec6b737a395c47ce",
       "id": 10,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Ghost Town"
     },
     {
@@ -163,12 +163,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/0pdfN7nOHMYmKykzu1cyfm?si=10e78bec3469457b",
       "id": 11,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Any Man Of Mine"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (5°-16t)",
+      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (5\u00b0-16t)",
       "songTitle": "Yes!",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -178,12 +178,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1PrZOkFxJqTZAH8P3x87hW?si=971dc14bd1b64b31",
       "id": 12,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Yes!"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 2\nRestart: 1 (4°-16t)\nTag: 1 (dopo il 9°)",
+      "details": "Tempi: 32\nMuri: 2\nRestart: 1 (4\u00b0-16t)\nTag: 1 (dopo il 9\u00b0)",
       "songTitle": "Rodeo Time",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -193,7 +193,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/65Sfcb8WX3RSX5zwEnphgd?si=a8a426e1e75448f5",
       "id": 13,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Rodeo Time"
     },
     {
@@ -208,7 +208,7 @@
       "spotifyUrl": "",
       "id": 14,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Irish Stew"
     },
     {
@@ -223,7 +223,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/29Qqb1qYSjC1pSK8QPDnkp?si=8f9be397fc454c86",
       "id": 15,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Better Life"
     },
     {
@@ -238,12 +238,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/35cMwi8CMROCmg0rCloCMm?si=5f4b6d0d08654384",
       "id": 16,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Keeping it country"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (4°-8t)",
+      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (4\u00b0-8t)",
       "songTitle": "Take it easy",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -253,7 +253,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4yugZvBYaoREkJKtbG08Qr?si=de9241b6d8a344cf",
       "id": 17,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Big Bang"
     },
     {
@@ -268,13 +268,13 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7mGKB8c5XRtgTlPp5bVkYi?si=b30a9bfb36134c9b",
       "id": 18,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Dance Again"
     },
     {
       "notes": "",
       "details": "Tempi: 32\nMuri: 4",
-      "songTitle": "Halleluy’all",
+      "songTitle": "Halleluy\u2019all",
       "stepsheetTitle": "",
       "choreographer": "",
       "youtubeUrl": "https://youtu.be/4HxJ3grzuE4?si=sCPGlGsPOBvaUvQ8&t=73",
@@ -283,7 +283,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7s38piAvcuKvWqx8lUiA2E?si=81eaeabcb2ca4872",
       "id": 19,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Aaryn's Spirit"
     },
     {
@@ -298,7 +298,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4n5XKb4NXIGQjCzcjCohSU?si=2699af06cc9c43e0",
       "id": 20,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "The Belle of Belfast City"
     },
     {
@@ -313,7 +313,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4vbW5aT9UQGRqEScStQPPy?si=6be6f5e34ce84329",
       "id": 21,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "No-one needs to know"
     },
     {
@@ -328,11 +328,11 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1NpcXmiVJpDsdaOEejWgTC?si=90ddf3e5efed4443",
       "id": 22,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Whiskey Wiggle"
     },
     {
-      "notes": "Rispetto al video, noi lo balliamo su un brano diverso (Cotton Eye Joe) e dopo i due jazz boxes c'è gamba fuori destra (1), gamba fuori sinistra (1), gamba fuori destra (1) e gamba fuori sinistra (1/2, sincopato)",
+      "notes": "Rispetto al video, noi lo balliamo su un brano diverso (Cotton Eye Joe) e dopo i due jazz boxes c'\u00e8 gamba fuori destra (1), gamba fuori sinistra (1), gamba fuori destra (1) e gamba fuori sinistra (1/2, sincopato)",
       "details": "Tempi: 40\nMuri: 1",
       "songTitle": "Cotton Eyed Joe",
       "stepsheetTitle": "",
@@ -343,7 +343,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/06hsdMbBxWGqBO0TV0Zrkf?si=622090d035e144c7",
       "id": 23,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Ski bumpus"
     },
     {
@@ -358,7 +358,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/20RPaiBW8lEDaUrxAx9WtP?si=170448428c894f43",
       "id": 24,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Heyday tonight"
     },
     {
@@ -373,7 +373,7 @@
       "spotifyUrl": "",
       "id": 25,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "On my radio"
     },
     {
@@ -388,7 +388,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1bgtaRgU3OKuuNHAADBQ4M?si=05a179260ace41d1",
       "id": 26,
       "stepsheetUrl": "",
-      "year": 1,
+      "year": "1",
       "videoTitle": "Il video tutorial era nella chat whatsapp di gruppo."
     },
     {
@@ -403,12 +403,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1OUhNHcqwphEAugcMiT5zF?si=a2802687b4c148ae",
       "id": 27,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Dancing Violins"
     },
     {
       "notes": "",
-      "details": "Tempi: 48\nMuri: 2\nRestart: 2 (3°-24t,  7°-32t)\nFinal: 16t",
+      "details": "Tempi: 48\nMuri: 2\nRestart: 2 (3\u00b0-24t,  7\u00b0-32t)\nFinal: 16t",
       "songTitle": "Rodeo Queen",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -418,7 +418,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/3ybE2lAQRSPCAZrMegkQlE?si=3fdddd68472d48ed",
       "id": 28,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Dreamcatchers"
     },
     {
@@ -433,7 +433,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1dgWTMoHwTUnQhOQ8SR5fV?si=7df634e934c64c0c",
       "id": 29,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "American Kids"
     },
     {
@@ -448,7 +448,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/3vFdNZTedff0LeqZjWxS1W?si=aef71ebe94144865",
       "id": 30,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "We Went"
     },
     {
@@ -463,12 +463,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7vSn3VNbzOtPebdj6ZSebj?si=97254d0308ec4f1c",
       "id": 31,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "To Hell and Back"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (4°-16t)\nTag: 1 (dopo il 7°)",
+      "details": "Tempi: 32\nMuri: 4\nRestart: 1 (4\u00b0-16t)\nTag: 1 (dopo il 7\u00b0)",
       "songTitle": "Party don't start",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -478,7 +478,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/2dUl96G8VGEMBfSCcKplje?si=c1e3fd0d460c43dd",
       "id": 32,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Party don't start"
     },
     {
@@ -493,11 +493,11 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/0GlFJjFy9fc0DPHt9TRbzQ?si=55df9cd9697441b2",
       "id": 33,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Best Adventure"
     },
     {
-      "notes": "La canzone su Spotify è di Kevin Greaves, quella di Luke Combs non c'è.",
+      "notes": "La canzone su Spotify \u00e8 di Kevin Greaves, quella di Luke Combs non c'\u00e8.",
       "details": "Tempi: 32\nMuri: 4",
       "songTitle": "Honky Tonky Highway",
       "stepsheetTitle": "",
@@ -508,7 +508,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6Fq1izZw3fcjy5lzrM6EYe?si=ebe94cfe33d64935",
       "id": 34,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Another Show"
     },
     {
@@ -523,12 +523,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/0K6r5lZWUTGOkqjAiVEyt2?si=c0c1fec636c6454b",
       "id": 35,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Texas Time"
     },
     {
       "notes": "",
-      "details": "Tempi: 48\nMuri: 2\nRestart: 3 (3°-32t, 4°-36t, 6°-32t) Tag: 1 (7°-32t)",
+      "details": "Tempi: 48\nMuri: 2\nRestart: 3 (3\u00b0-32t, 4\u00b0-36t, 6\u00b0-32t) Tag: 1 (7\u00b0-32t)",
       "songTitle": "Hot Apple Pie",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -538,7 +538,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1JPNXtzHlKzyF1l6lBsDKE?si=83b1dd6abe7f4544",
       "id": 36,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Mr. Funky"
     },
     {
@@ -553,7 +553,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/5ITqNqxrrBOdWcRqa3Hz8s?si=a82e4679723c475c",
       "id": 37,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Lonely Drum"
     },
     {
@@ -568,7 +568,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/5LObQus9fvNtgkPvUc1eFn?si=40429a83c2de4b9e",
       "id": 38,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Better Country"
     },
     {
@@ -583,12 +583,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4S518ci8UY4op0Xyp6Hx6o?si=a75bdde5e9744057",
       "id": 39,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Toes"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 2\nRestart: 2 (5°-20t e 11°-20t)\nTag: 3 (dopo il 2°-16t, 6°-16t e 11°-20t)",
+      "details": "Tempi: 32\nMuri: 2\nRestart: 2 (5\u00b0-20t e 11\u00b0-20t)\nTag: 3 (dopo il 2\u00b0-16t, 6\u00b0-16t e 11\u00b0-20t)",
       "songTitle": "Goliath",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -598,12 +598,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/0tS0QcV7V4vxoq2jUXMRI1?si=926fde1503694354",
       "id": 40,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Goliath"
     },
     {
       "notes": "",
-      "details": "Tempi: 64\nMuri: 2\nRestart: 2 (3°-48t e 5°-52t)\nTag: 1 (dopo il 2°-4t)",
+      "details": "Tempi: 64\nMuri: 2\nRestart: 2 (3\u00b0-48t e 5\u00b0-52t)\nTag: 1 (dopo il 2\u00b0-4t)",
       "songTitle": "200 Ounces",
       "stepsheetTitle": "",
       "choreographer": "Castagnoli, Civa e Ghinolfi",
@@ -613,7 +613,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7dJUaISlk3QsVeV4gKcYfl?si=c25caacd706a4fbb",
       "id": 41,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Second Time"
     },
     {
@@ -628,7 +628,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/0P0PK9XdR3uU1pX0mOetWz?si=1061de85eda64c05",
       "id": 42,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Burning Love"
     },
     {
@@ -643,7 +643,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7zs1b7pTRn0xiwbXOhTwUG?si=e14c213ada1d4b83",
       "id": 43,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Start the car"
     },
     {
@@ -658,12 +658,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/2vz1CsL5WBsbpBcwgboTAw?si=bcb18bfc5ff74ee7",
       "id": 44,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "Footloose"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 4\nRestart: 2 (4° e 8°)",
+      "details": "Tempi: 32\nMuri: 4\nRestart: 2 (4\u00b0 e 8\u00b0)",
       "songTitle": "It's America",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -673,12 +673,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6QbcLktLNe7eYqh8TjZeCd?si=d6651bc50c14404b",
       "id": 45,
       "stepsheetUrl": "",
-      "year": 2,
+      "year": "2",
       "videoTitle": "It's America"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 4\nRestart: 2 (3° e 6°)",
+      "details": "Tempi: 32\nMuri: 4\nRestart: 2 (3\u00b0 e 6\u00b0)",
       "songTitle": "Story",
       "stepsheetTitle": "",
       "choreographer": "",
@@ -688,7 +688,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7iVvFI1Y9AhmnOurzQxiOL?si=09a868266fe74d7f",
       "id": 46,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "Story"
     },
     {
@@ -703,7 +703,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6Pwzwpt3p5nI6IgJ656Jgg?si=376093cd3d11471a",
       "id": 47,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "White soldier"
     },
     {
@@ -718,7 +718,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/3INTrlWeAlsDBkRzrQJao8?si=d03a4beec0744798",
       "id": 48,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "Tour in Mexico"
     },
     {
@@ -733,7 +733,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/200x8ONbPfFzByUr3fVz46?si=52eca87343c84221",
       "id": 49,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "Head or tails"
     },
     {
@@ -748,7 +748,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4k3lPl8YTKuY8c1HelVnm3?si=c298bd16abeb4336",
       "id": 50,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "TAKE IT"
     },
     {
@@ -763,7 +763,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/09Lv5rSTrlaGvx43Lq5fmM?si=3cffd7eaa3214e4f",
       "id": 51,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "TOMORROW NEVER COMES"
     },
     {
@@ -778,7 +778,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/3TJqxXlJUt8N6kuBaIs8Wr?si=354afd8d1e1a4dc7",
       "id": 52,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "JUST A GIRL"
     },
     {
@@ -793,7 +793,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/0eBFgRxyVSeuT4iyrbukdn?si=71cfd92aab48440f",
       "id": 53,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "WILD"
     },
     {
@@ -808,7 +808,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/7wd9kz7UXhJr8pgdqpzKu5?si=9aa652b23b7040a4",
       "id": 54,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "TIPSY"
     },
     {
@@ -823,22 +823,22 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/2uqYupMHANxnwgeiXTZXzd?si=d965f8aa28e74df0",
       "id": 55,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "3+",
       "videoTitle": "AUSTIN"
     },
     {
       "notes": "",
-      "details": "Tempi: 64\nMuri: 1\nRestart: 1 (1°-32t)\nTag: 1 (dopo il 5°-32t)",
+      "details": "Tempi: 64\nMuri: 1\nRestart: 1 (1\u00b0-32t)\nTag: 1 (dopo il 5\u00b0-32t)",
       "songTitle": "Come my way",
       "stepsheetTitle": "WEB",
-      "choreographer": "Séverine Fillion, Chrystel Durand & Guillaume Roussel",
+      "choreographer": "S\u00e9verine Fillion, Chrystel Durand & Guillaume Roussel",
       "youtubeUrl": "https://www.youtube.com/watch?v=Ii1ZGd60Dac",
       "style": "Line",
       "dance": "COME MY WAY",
       "spotifyUrl": "https://open.spotify.com/intl-it/track/56owgmNQwALKNMdW7HxAPP?si=782fd9e7a4a14b57",
       "id": 56,
       "stepsheetUrl": "https://www.copperknob.co.uk/stepsheets/168122/come-my-way",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "COME MY WAY"
     },
     {
@@ -853,7 +853,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6tZeXm970lZtSUiltKgM36?si=d6b07ab73c3e4ed3",
       "id": 57,
       "stepsheetUrl": "https://www.horsescountry.com/documents/carry-you-.pdf",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "CARRY YOU"
     },
     {
@@ -868,12 +868,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4BMdwXGri8lkH6SM9Mj8iZ?si=4221e116209349c5",
       "id": 58,
       "stepsheetUrl": "https://scontent.ffco2-1.fna.fbcdn.net/v/t39.30808-6/535493201_1503895927632631_5111182028074691858_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_ohc=Ajulq7NidVMQ7kNvwFmrfxU&_nc_oc=AdmHyKPc7TwDOpA0SMHc5GQbC2LuHx_TMWPm_9tNJ3dGQ670pk0mlQeiVpLj4Ka9KhwJkk-XpDtXUUfGT6v04cz4&_nc_zt=23&_nc_ht=scontent.ffco2-1.fna&_nc_gid=PBMncCwl9VH0teGX7gtyUw&oh=00_AfcdTr0_FmQBqWEV65tlyICTLagzXbWVpFhRZ4IHz3lM8A&oe=6902A799",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "DOODLES"
     },
     {
-      "notes": "Qui 2 tag assomigliano ad una \"parte B\" perché sono di 32t, mentre il 3° è un vero e proprio tag di 4t.",
-      "details": "Tempi: 32\nMuri: 2\nRestart: 1 (5°-16t)\nTag: 3 (dopo il 2°e 8°-32t e dopo 3°-4t)",
+      "notes": "Qui 2 tag assomigliano ad una \"parte B\" perch\u00e9 sono di 32t, mentre il 3\u00b0 \u00e8 un vero e proprio tag di 4t.",
+      "details": "Tempi: 32\nMuri: 2\nRestart: 1 (5\u00b0-16t)\nTag: 3 (dopo il 2\u00b0e 8\u00b0-32t e dopo 3\u00b0-4t)",
       "songTitle": "Oh love",
       "stepsheetTitle": "WEB",
       "choreographer": "Gianmarco Rossato",
@@ -883,12 +883,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/2bnkNJJEzmcIxCAGeMfzjP?si=29deb37a603f43c0",
       "id": 59,
       "stepsheetUrl": "https://www.copperknob.co.uk/stepsheets/199911/oh-love",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "OH LOVE"
     },
     {
       "notes": "",
-      "details": "Tempi: 64\nMuri: 4\nRestart: 1 (4°-32t)",
+      "details": "Tempi: 64\nMuri: 4\nRestart: 1 (4\u00b0-32t)",
       "songTitle": "Quitter",
       "stepsheetTitle": "WEB",
       "choreographer": "Maggie Gallagher",
@@ -898,7 +898,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/1AJdT11PD36JF0DHbtYsFL?si=b1d2cd18d0254962",
       "id": 60,
       "stepsheetUrl": "https://www.copperknob.co.uk/stepsheets/79313/quitter",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "QUITTER"
     },
     {
@@ -913,7 +913,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/4b59cVL60Pmfcem3h90uNK?si=dbd0667e7f6e4fa2",
       "id": 61,
       "stepsheetUrl": "https://linedance-berlin.de/wp-content/uploads/2025/10/Sparkle.pdf",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "SPARKLE"
     },
     {
@@ -928,12 +928,12 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/54p6vNJwGkt4FTaM8SCsxt?si=ccad49d6d0054554",
       "id": 62,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "GOOD NEWS"
     },
     {
       "notes": "",
-      "details": "Tempi: 32\nMuri: 4\nTag: 1 (dopo il 4° -16t)",
+      "details": "Tempi: 32\nMuri: 4\nTag: 1 (dopo il 4\u00b0 -16t)",
       "songTitle": "Non disponibile",
       "stepsheetTitle": "",
       "choreographer": "Maggie Gallagher",
@@ -944,7 +944,7 @@
       "spotifyUrl": "",
       "id": 63,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "IRISH SPIRIT"
     },
     {
@@ -959,7 +959,7 @@
       "spotifyUrl": "https://open.spotify.com/intl-it/track/6g3b9wRGkNqxwWmhRkLc7O?si=b632bd98977d419c",
       "id": 64,
       "stepsheetUrl": "",
-      "year": null,
+      "year": "ADV",
       "videoTitle": "TOCK THE TICKER"
     }
   ]

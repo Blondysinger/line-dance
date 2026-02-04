@@ -20,7 +20,7 @@ collections:
             summary: "{{fields.dance}}"
             fields:
               - { label: "ID", name: "id", widget: "number", value_type: "int", required: true }
-              - { label: "Anno", name: "year", widget: "number", required: false }
+              - { label: "Anno / Livello", name: "year", widget: "string", required: false }
               - { label: "Ballo", name: "dance", widget: "string", required: false }
               - { label: "Stile", name: "style", widget: "string", required: false }
               - { label: "Brano", name: "songTitle", widget: "string", required: false }
