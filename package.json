@@ -2,7 +2,8 @@
   "name": "line-dance-catalog",
   "private": true,
   "scripts": {
-    "dev": "netlify dev"
+    "dev": "netlify dev",
+    "db:migrate": "node scripts/db-migrate.cjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.0"
