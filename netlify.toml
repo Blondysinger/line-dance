@@ -1,3 +1,60 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+
+# The site is published from the repository root: keep project files that are
+# not part of the website out of reach (functions keep working: they live under
+# /.netlify/functions/, not /netlify/).
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/doc/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/deno.lock"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/dev.sh"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/README.md"
+  to = "/404"
+  status = 404
+  force = true
