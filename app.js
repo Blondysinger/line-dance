@@ -36,6 +36,8 @@ function systemTagsOf(it){
 
 const AUTH = "/.netlify/functions/auth";
 const TAGS = "/.netlify/functions/tags";
+const RATINGS = "/.netlify/functions/ratings";
+const SHARES = "/.netlify/functions/shares";
 const TAG_PALETTE = ["#7aa2ff", "#34d399", "#f472b6", "#fbbf24", "#a78bfa", "#38bdf8", "#fb923c", "#f87171", "#4ade80", "#e879f9"];
 
 const $ = (id) => document.getElementById(id);
@@ -386,7 +388,7 @@ function showResults(res, opts = {}){
 
 /* ---------- Fresh data: cache, revision polling, same-browser push ---------- */
 
-const CACHE_KEY = "ld-catalog-cache-v1";
+const CACHE_KEY = "ld-catalog-cache-v2";
 const REFRESH_MS = 30000;
 
 // Last default view seen (meta + first page): shown instantly on the next
@@ -487,10 +489,15 @@ function startUpdateWatchers(){
     last = Date.now();
     checkForUpdates();
     refreshTagsQuietly();
+    refreshInboxCount();
   };
   document.addEventListener("visibilitychange", onVisible);
   window.addEventListener("focus", onVisible);
-  setInterval(()=>{ if(!document.hidden) checkForUpdates(); }, REFRESH_MS);
+  setInterval(()=>{
+    if(document.hidden) return;
+    checkForUpdates();
+    refreshInboxCount();
+  }, REFRESH_MS);
 }
 
 function showListSkeleton(){
@@ -604,6 +611,7 @@ function buildListItem(it, idx){
   const song = safe(it.songTitle);
   const style = safe(it.style);
   s.textContent = [song, style].filter(Boolean).join(" • ");
+  s.appendChild(makeListRating(it));
 
   box.appendChild(t);
   box.appendChild(s);
@@ -828,6 +836,7 @@ function renderDetail(it){
   $("detailChoreo").textContent = safe(it.choreographer) || "—";
 
   renderDetailTags(it);
+  renderRating(it);
   renderExtraLinks(it);
 
   // Stepsheet link (if it's a URL, open it; else hide)
@@ -1024,9 +1033,15 @@ async function doRefreshUser(){
       console.error(err);
       toast("Impossibile caricare i tuoi tag");
     }
+    await loadMyRatings();
+    refreshInboxCount();
   } else {
     setTagData({});
+    ratingState.mine = new Map();
+    setPending(0);
   }
+  const sel = selectedItem();
+  if(sel) renderRating(sel);
   renderUserArea();
   renderTagFilter();
   afterTagsChanged(hadTagFilter);
@@ -1145,6 +1160,8 @@ function wireAuth(){
     if(!panel.contains(e.target)) setMenu(false);
   });
   $("logoutBtn").addEventListener("click", ()=>{ setMenu(false); logout(); });
+  $("inboxBtn").addEventListener("click", ()=>{ setMenu(false); openInbox("received"); });
+  $("shareTagBtn").addEventListener("click", ()=>{ setMenu(false); openShareModal(); });
   wireThemeSwitch(panel);
   $("exportTagsBtn").addEventListener("click", ()=>{ setMenu(false); openExportModal(); });
   $("importTagsBtn").addEventListener("click", ()=>{ setMenu(false); $("importTagsFile").click(); });
@@ -1177,6 +1194,434 @@ function wireThemeSwitch(root){
   });
   theme.onChange(sync);
   sync();
+}
+
+/* ---------- Star ratings (0-5) ---------- */
+
+const ratingState = { mine: new Map() };   // danceId -> my stars
+
+function formatAvg(v){
+  return Number(v).toLocaleString("it-IT", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+}
+
+// Five stars filled in proportion to the average.
+function makeStarBar(avg){
+  const bar = document.createElement("span");
+  bar.className = "starBar";
+  bar.setAttribute("aria-hidden", "true");
+  const bg = document.createElement("span");
+  bg.className = "starBarBg";
+  bg.textContent = "★★★★★";
+  const fill = document.createElement("span");
+  fill.className = "starBarFill";
+  fill.textContent = "★★★★★";
+  fill.style.width = `${Math.max(0, Math.min(100, (Number(avg) || 0) / 5 * 100))}%`;
+  bar.append(bg, fill);
+  return bar;
+}
+
+function makeListRating(it){
+  const span = document.createElement("span");
+  span.className = "itemRating";
+  const r = it.rating || {};
+  if(r.count){
+    span.textContent = ` • ★ ${formatAvg(r.avg)}`;
+    span.title = `Media ${formatAvg(r.avg)} su 5 (${r.count} ${r.count === 1 ? "voto" : "voti"})`;
+  }
+  return span;
+}
+
+function updateListRating(it){
+  const li = document.querySelector(`.listItem[data-id="${CSS.escape(String(it.id))}"] .itemRating`);
+  if(li) li.replaceWith(makeListRating(it));
+}
+
+function renderRating(it){
+  const r = it.rating || { avg: null, count: 0 };
+  const avgEl = $("ratingAvg");
+  avgEl.innerHTML = "";
+  avgEl.appendChild(makeStarBar(r.count ? r.avg : 0));
+  const txt = document.createElement("span");
+  txt.className = "ratingText";
+  if(r.count){
+    const strong = document.createElement("strong");
+    strong.textContent = formatAvg(r.avg);
+    txt.append(strong, ` · ${r.count} ${r.count === 1 ? "voto" : "voti"}`);
+  } else {
+    txt.textContent = "Nessun voto";
+  }
+  avgEl.appendChild(txt);
+  avgEl.title = r.count ? `Media ${formatAvg(r.avg)} su 5` : "Ancora nessun voto";
+
+  const mine = $("ratingMine");
+  mine.innerHTML = "";
+  if(!tagState.user){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chipBtn";
+    b.textContent = "Accedi per votare";
+    b.addEventListener("click", openLoginModal);
+    mine.appendChild(b);
+    return;
+  }
+  const key = String(it.id);
+  const cur = ratingState.mine.has(key) ? ratingState.mine.get(key) : null;
+  const label = document.createElement("span");
+  label.className = "ratingLabel";
+  label.textContent = "Il tuo voto";
+  const group = document.createElement("div");
+  group.className = "starInput";
+  group.setAttribute("role", "radiogroup");
+  group.setAttribute("aria-label", "Il tuo voto");
+  for(let n = 0; n <= 5; n++){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "radio");
+    b.className = n === 0 ? "starBtn starZero" : "starBtn";
+    b.textContent = n === 0 ? "0" : "★";
+    b.title = `${n} ${n === 1 ? "stella" : "stelle"}`;
+    b.setAttribute("aria-label", b.title);
+    b.classList.toggle("on", cur != null && (n === 0 ? cur === 0 : n <= cur));
+    b.setAttribute("aria-checked", cur === n ? "true" : "false");
+    b.addEventListener("click", ()=> rate(it, n));
+    group.appendChild(b);
+  }
+  mine.append(label, group);
+  if(cur != null){
+    const x = document.createElement("button");
+    x.type = "button";
+    x.className = "linkBtn";
+    x.textContent = "Rimuovi";
+    x.addEventListener("click", ()=> rate(it, null));
+    mine.appendChild(x);
+  }
+}
+
+async function loadMyRatings(){
+  try{
+    const r = await api(RATINGS);
+    ratingState.mine = new Map(Object.entries(r.mine || {}).map(([k, v]) => [String(k), v]));
+  }catch{
+    ratingState.mine = new Map();
+  }
+}
+
+async function rate(it, stars){
+  try{
+    const r = await api(RATINGS, { method: "PUT", body: JSON.stringify({ danceId: it.id, stars }) });
+    const key = String(it.id);
+    if(stars == null) ratingState.mine.delete(key); else ratingState.mine.set(key, stars);
+    const rating = { avg: r.avg, count: r.count };
+    state.items.forEach(x => { if(String(x.id) === key) x.rating = rating; });
+    it.rating = rating;
+    renderRating(it);
+    updateListRating(it);
+    toast(stars == null ? "Voto rimosso" : `Hai dato ${stars} ${stars === 1 ? "stella" : "stelle"}`);
+  }catch(err){
+    toast(err.status === 401 ? "Accedi per votare" : "Errore nel salvataggio del voto");
+  }
+}
+
+/* ---------- Tag sharing and messages ---------- */
+
+const shareState = { pending: null, to: null, inboxTab: "received", data: null };
+
+function setPending(n){
+  const prev = shareState.pending;
+  shareState.pending = n;
+  $("menuBadge").textContent = String(n);
+  $("menuBadge").classList.toggle("hidden", !n);
+  $("inboxCount").textContent = String(n);
+  $("inboxCount").classList.toggle("hidden", !n);
+  if(prev != null && n > prev) toast("Hai ricevuto un tag condiviso: aprilo da Messaggi");
+}
+
+async function refreshInboxCount(){
+  if(!tagState.user) return;
+  try{
+    setPending((await api(`${SHARES}?view=count`)).pending);
+  }catch{}
+}
+
+function makeAvatar(u, cls = "avatar"){
+  const av = document.createElement("span");
+  av.className = cls;
+  if(u.avatarUrl){
+    const img = document.createElement("img");
+    img.src = u.avatarUrl;
+    img.alt = "";
+    img.referrerPolicy = "no-referrer";
+    av.appendChild(img);
+  } else {
+    av.textContent = (u.name || "?").trim().charAt(0).toUpperCase();
+  }
+  return av;
+}
+
+const shareSel = new Set();
+
+// Same selection model as the export: preselect the active tag filter, or all.
+function openShareModal(preselect){
+  if(!tagState.tags.size){
+    toast("Non hai ancora tag da condividere");
+    return;
+  }
+  shareSel.clear();
+  const ids = preselect && preselect.length ? preselect : (tagState.filter.size ? [...tagState.filter] : [...tagState.tags.keys()]);
+  ids.filter(id => tagState.tags.has(id)).forEach(id => shareSel.add(id));
+  $("shareTagSearch").value = "";
+  renderShareTagList();
+  shareState.to = null;
+  $("shareSearch").value = "";
+  $("shareResults").innerHTML = "";
+  $("shareMessage").value = "";
+  renderShareTo();
+  openModal("shareModal");
+  setTimeout(()=> $("shareSearch").focus(), 30);
+}
+
+function renderShareTagList(){
+  const q = safe($("shareTagSearch").value).toLowerCase();
+  const counts = danceCountByTag();
+  const list = $("shareTagList");
+  list.innerHTML = "";
+  sortedTags().filter(t => !q || t.name.toLowerCase().includes(q)).forEach(tag => {
+    const li = document.createElement("li");
+    const label = document.createElement("label");
+    label.className = "exportRow";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = shareSel.has(tag.id);
+    cb.addEventListener("change", ()=>{
+      if(cb.checked) shareSel.add(tag.id); else shareSel.delete(tag.id);
+      updateShareSummary();
+    });
+    const n = counts.get(tag.id) || 0;
+    const count = document.createElement("span");
+    count.className = "exportCount";
+    count.textContent = n === 1 ? "1 ballo" : `${n} balli`;
+    label.append(cb, makeChip(tag), count);
+    li.appendChild(label);
+    list.appendChild(li);
+  });
+  updateShareSummary();
+}
+
+function updateShareSummary(){
+  const n = shareSel.size;
+  const all = n === tagState.tags.size;
+  $("shareSummary").textContent = all ? `Tutti i ${n} tag selezionati` : `${n} di ${tagState.tags.size} tag selezionati`;
+  $("shareSendBtn").disabled = !shareState.to || n === 0;
+  $("shareSendBtn").textContent = n === 0 ? "Invia" : (n === 1 ? "Invia 1 tag" : `Invia ${n} tag`);
+}
+
+function renderShareTo(){
+  const box = $("shareTo");
+  const to = shareState.to;
+  box.innerHTML = "";
+  box.classList.toggle("hidden", !to);
+  $("shareSearch").classList.toggle("hidden", !!to);
+  $("shareResults").classList.toggle("hidden", !!to);
+  updateShareSummary();
+  if(!to) return;
+  const name = document.createElement("span");
+  name.className = "shareToName";
+  name.textContent = to.name;
+  const mail = document.createElement("span");
+  mail.className = "muted";
+  mail.textContent = to.email;
+  const x = document.createElement("button");
+  x.type = "button";
+  x.className = "chipX";
+  x.textContent = "×";
+  x.setAttribute("aria-label", "Cambia destinatario");
+  x.addEventListener("click", ()=>{ shareState.to = null; renderShareTo(); $("shareSearch").focus(); });
+  box.append(makeAvatar(to), name, mail, x);
+}
+
+async function searchShareUsers(){
+  const q = safe($("shareSearch").value);
+  const list = $("shareResults");
+  if(q.length < 2){ list.innerHTML = ""; return; }
+  try{
+    const { users } = await api(`${SHARES}?view=users&q=${encodeURIComponent(q)}`);
+    list.innerHTML = "";
+    if(!users.length){
+      const li = document.createElement("li");
+      li.className = "muted";
+      li.textContent = "Nessun utente trovato";
+      list.appendChild(li);
+      return;
+    }
+    users.forEach(u => {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "shareUser";
+      const name = document.createElement("span");
+      name.className = "shareToName";
+      name.textContent = u.name;
+      const mail = document.createElement("span");
+      mail.className = "muted";
+      mail.textContent = u.email;
+      b.append(makeAvatar(u), name, mail);
+      b.addEventListener("click", ()=>{ shareState.to = u; renderShareTo(); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+  }catch{
+    list.innerHTML = "";
+  }
+}
+
+async function sendShare(){
+  const to = shareState.to;
+  const ids = [...shareSel].filter(id => tagState.tags.has(id));
+  if(!to || !ids.length) return;
+  const btn = $("shareSendBtn");
+  btn.disabled = true;
+  try{
+    const r = await api(SHARES, { method: "POST", body: JSON.stringify({ toUserId: to.id, tagIds: ids, message: $("shareMessage").value }) });
+    closeModalEl("shareModal");
+    toast(`${r.tags === 1 ? "1 tag inviato" : `${r.tags} tag inviati`} a ${to.name}`);
+  }catch(err){
+    toast(err.status === 429 ? "Troppe condivisioni in attesa per questo utente" : "Invio non riuscito");
+    btn.disabled = false;
+  }
+}
+
+async function openInbox(tab){
+  shareState.inboxTab = tab || "received";
+  openModal("inboxModal");
+  const list = $("inboxList");
+  list.innerHTML = '<li class="muted">Caricamento…</li>';
+  try{
+    shareState.data = await api(SHARES);
+    setPending(shareState.data.pending);
+    renderInbox();
+  }catch{
+    list.innerHTML = '<li class="muted">Impossibile caricare i messaggi</li>';
+  }
+}
+
+const SHARE_STATUS = { pending: "In attesa", accepted: "Accettato", declined: "Rifiutato" };
+
+function renderInbox(){
+  const tab = shareState.inboxTab;
+  $("inboxTabReceived").setAttribute("aria-selected", tab === "received" ? "true" : "false");
+  $("inboxTabSent").setAttribute("aria-selected", tab === "sent" ? "true" : "false");
+  const list = $("inboxList");
+  list.innerHTML = "";
+  const rows = (shareState.data && shareState.data[tab]) || [];
+  if(!rows.length){
+    const li = document.createElement("li");
+    li.className = "muted inboxEmpty";
+    li.textContent = tab === "received" ? "Nessun tag ricevuto." : "Non hai ancora condiviso tag.";
+    list.appendChild(li);
+    return;
+  }
+  rows.forEach(r => {
+    const other = tab === "received" ? r.from : r.to;
+    const li = document.createElement("li");
+    li.className = "inboxItem" + (r.status === "pending" && tab === "received" ? " unread" : "");
+    const head = document.createElement("div");
+    head.className = "inboxHead";
+    const who = document.createElement("div");
+    who.className = "inboxWho";
+    const name = document.createElement("strong");
+    name.textContent = other.name;
+    const nTags = r.tags.length === 1 ? "1 tag" : `${r.tags.length} tag`;
+    who.append(tab === "received" ? "" : "A ", name, tab === "received" ? ` ti ha inviato ${nTags}` : ` · ${nTags}`);
+    const when = document.createElement("span");
+    when.className = "muted inboxWhen";
+    when.textContent = new Date(r.createdAt).toLocaleString("it-IT", { dateStyle: "short", timeStyle: "short" });
+    head.append(makeAvatar(other), who, when);
+
+    // Received and still pending: one checkbox per tag (all preselected).
+    const pickable = tab === "received" && r.status === "pending";
+    const picked = new Set(r.tags.map(t => t.name));
+    const tagBox = document.createElement("div");
+    tagBox.className = "inboxTags";
+    r.tags.forEach(t => {
+      const row = document.createElement(pickable ? "label" : "div");
+      row.className = "inboxTagRow";
+      if(pickable){
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = true;
+        cb.addEventListener("change", ()=>{
+          if(cb.checked) picked.add(t.name); else picked.delete(t.name);
+          const yes = li.querySelector(".inboxFoot .primary");
+          if(yes){
+            yes.disabled = picked.size === 0;
+            yes.textContent = picked.size === r.tags.length ? "Aggiungi tutti ai miei tag" : `Aggiungi ${picked.size} ai miei tag`;
+          }
+        });
+        row.appendChild(cb);
+      }
+      row.appendChild(makeChip({ name: t.name, color: t.color }));
+      const n = document.createElement("span");
+      n.className = "muted";
+      n.textContent = t.dances === 1 ? "1 ballo" : `${t.dances} balli`;
+      row.appendChild(n);
+      tagBox.appendChild(row);
+    });
+    li.append(head, tagBox);
+
+    if(r.message){
+      const q = document.createElement("blockquote");
+      q.className = "inboxMsg";
+      q.textContent = r.message;
+      li.appendChild(q);
+    }
+
+    const foot = document.createElement("div");
+    foot.className = "inboxFoot";
+    if(tab === "received" && r.status === "pending"){
+      const yes = document.createElement("button");
+      yes.type = "button";
+      yes.className = "primary";
+      yes.textContent = r.tags.length === 1 ? "Aggiungi ai miei tag" : "Aggiungi tutti ai miei tag";
+      yes.addEventListener("click", ()=> respondShare(r.id, true, yes, [...picked]));
+      const no = document.createElement("button");
+      no.type = "button";
+      no.className = "ghost";
+      no.textContent = "Rifiuta";
+      no.addEventListener("click", ()=> respondShare(r.id, false, no));
+      foot.append(yes, no);
+    } else {
+      const st = document.createElement("span");
+      st.className = `shareStatus ${r.status}`;
+      st.textContent = r.status === "accepted" && r.acceptedCount != null && r.acceptedCount < r.tags.length
+        ? `Accettati ${r.acceptedCount} di ${r.tags.length}`
+        : (SHARE_STATUS[r.status] || r.status);
+      foot.appendChild(st);
+    }
+    li.appendChild(foot);
+    list.appendChild(li);
+  });
+}
+
+async function respondShare(id, accept, btn, names){
+  btn.disabled = true;
+  try{
+    const r = await api(`${SHARES}?action=respond`, { method: "POST", body: JSON.stringify({ id, accept, names }) });
+    if(accept){
+      const hadTagFilter = tagState.filter.size > 0;
+      setTagData(await api(TAGS));
+      renderTagFilter();
+      afterTagsChanged(hadTagFilter, { quiet: true });
+      const n = (r.imported && r.imported.tags) || 0;
+      const links = (r.imported && r.imported.links) || 0;
+      toast(`${n === 1 ? "1 tag aggiunto" : `${n} tag aggiunti`} ai tuoi (${links} ${links === 1 ? "nuova associazione" : "nuove associazioni"})`);
+    } else {
+      toast("Condivisione rifiutata");
+    }
+    await openInbox("received");
+  }catch(err){
+    btn.disabled = false;
+    toast(err.status === 409 ? "Questa condivisione è già stata gestita" : "Operazione non riuscita");
+  }
 }
 
 /* ---------- Tags: filter, editor, export/import ---------- */
@@ -1665,6 +2110,28 @@ async function importTagsFromFile(e){
   }
 }
 
+function wireSocial(){
+  wireDismissableModal("shareModal");
+  wireDismissableModal("inboxModal");
+  let timer = null;
+  $("shareSearch").addEventListener("input", ()=>{
+    clearTimeout(timer);
+    timer = setTimeout(searchShareUsers, 250);
+  });
+  $("shareSendBtn").addEventListener("click", sendShare);
+  $("shareTagSearch").addEventListener("input", renderShareTagList);
+  $("shareAllBtn").addEventListener("click", ()=>{ tagState.tags.forEach((_t, id) => shareSel.add(id)); renderShareTagList(); });
+  $("shareNoneBtn").addEventListener("click", ()=>{ shareSel.clear(); renderShareTagList(); });
+  // From the export dialog: share the same selection with a user.
+  $("exportShareBtn").addEventListener("click", ()=>{
+    const ids = [...exportSel];
+    closeModalEl("exportModal");
+    openShareModal(ids);
+  });
+  $("inboxTabReceived").addEventListener("click", ()=>{ shareState.inboxTab = "received"; renderInbox(); });
+  $("inboxTabSent").addEventListener("click", ()=>{ shareState.inboxTab = "sent"; renderInbox(); });
+}
+
 function wireTags(){
   $("editTagsBtn").addEventListener("click", openTagEditor);
   $("tagFilter").addEventListener("change", (e)=>{
@@ -1869,6 +2336,7 @@ async function init(){
   wireStepsheetModal();
   wireAuth();
   wireTags();
+  wireSocial();
 
   // User and login providers do not depend on the catalog nor on Netlify
   // Identity (Google/Facebook use our session cookie): ask right away. A saved

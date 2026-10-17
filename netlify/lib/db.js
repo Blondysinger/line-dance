@@ -103,6 +103,45 @@ const SCHEMA = [
        raise exception 'DANCE_VERSION_CONFLICT';
      end if;
    end $f$`,
+  // Star ratings: one vote (0-5) per user and dance; the average is computed.
+  `create table if not exists dance_ratings (
+    user_id bigint not null references app_users(id) on delete cascade,
+    dance_id int not null references dances(id) on delete cascade,
+    stars smallint not null check (stars between 0 and 5),
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
+    primary key (user_id, dance_id)
+  )`,
+  `create index if not exists dance_ratings_dance_idx on dance_ratings (dance_id)`,
+
+  // Tag sharing between users: a snapshot (copy) of one or more personal tags
+  // ([{name, color, dance_ids}]) sent to another user, who accepts all or some
+  // of them (merged into their tags) or declines.
+  `create table if not exists tag_shares (
+    id bigserial primary key,
+    from_user_id bigint not null references app_users(id) on delete cascade,
+    to_user_id bigint not null references app_users(id) on delete cascade,
+    tags jsonb not null default '[]'::jsonb,
+    message text not null default '' check (char_length(message) <= 500),
+    status text not null default 'pending' check (status in ('pending', 'accepted', 'declined')),
+    accepted_count int,
+    created_at timestamptz not null default now(),
+    responded_at timestamptz,
+    check (from_user_id <> to_user_id)
+  )`,
+  // First version stored a single tag per row (never used in production).
+  `alter table tag_shares add column if not exists tags jsonb not null default '[]'::jsonb`,
+  `alter table tag_shares add column if not exists accepted_count int`,
+  `alter table tag_shares drop column if exists tag_name, drop column if exists tag_color, drop column if exists dance_ids`,
+  `do $$ begin
+     if not exists (select 1 from pg_constraint where conname = 'tag_shares_tags_chk') then
+       alter table tag_shares add constraint tag_shares_tags_chk
+         check (jsonb_typeof(tags) = 'array' and jsonb_array_length(tags) between 1 and 500) not valid;
+     end if;
+   end $$`,
+  `create index if not exists tag_shares_to_idx on tag_shares (to_user_id, status, created_at desc)`,
+  `create index if not exists tag_shares_from_idx on tag_shares (from_user_id, created_at desc)`,
+
   // Fingerprint of everything the public catalog shows: dances (version and
   // order), official tags and difficulty levels. Used by bulk writes and by
   // clients polling for changes.
@@ -111,7 +150,8 @@ const SCHEMA = [
      select md5(
        coalesce((select string_agg(id || ':' || version || ':' || sort_order, ',' order by id) from dances), '') || '|' ||
        coalesce((select string_agg(id || ':' || name || ':' || color, ',' order by id) from system_tags), '') || '|' ||
-       coalesce((select string_agg(code || ':' || coalesce(label, '') || ':' || sort_order, ',' order by code) from levels), '')
+       coalesce((select string_agg(code || ':' || coalesce(label, '') || ':' || sort_order, ',' order by code) from levels), '') || '|' ||
+       coalesce((select count(*) || ':' || coalesce(sum(stars), 0) || ':' || coalesce(max(updated_at)::text, '') from dance_ratings), '')
      )
    $f$`,
   `create or replace function assert_catalog_revision(p_rev text) returns void
@@ -182,6 +222,7 @@ const SCHEMA = [
     primary key (tag_id, dance_id)
   )`,
   `create index if not exists dance_system_tags_dance_idx on dance_system_tags (dance_id)`,
+
 
   // Seed configuration (never overwrites edits made in the DB).
   // Difficulty levels: a configured list (code, label, order), chosen from a

@@ -2,6 +2,7 @@ const { json, text, parseJsonBody } = require("../lib/http");
 const { getSql, ensureSchema } = require("../lib/db");
 const { getCurrentUser } = require("../lib/users");
 const { danceTitles } = require("../lib/catalog-store");
+const { mergeTags } = require("../lib/tags-store");
 
 // User-scoped tags on dances.
 //   GET                   -> { tags, danceTags }
@@ -155,43 +156,13 @@ async function exportTags(sql, uid, user, only){
 // Merge: existing tags keep their color, links are added, nothing is removed.
 async function importTags(sql, uid, body){
   if(!body || !Array.isArray(body.tags)) return text(400, "File non valido: serve { tags: [...] }");
-  const known = new Set((await danceTitles(sql)).keys());
-  let ignored = 0;
-
-  const tags = normalizeTags(body.tags, MAX_IMPORT_TAGS)
-    .map(t => {
-      t.color = t.color || defaultColor(t.name);
-      const raw = Array.isArray(t.danceIds) ? t.danceIds : (Array.isArray(t.dances) ? t.dances.map(d => d && d.id) : []);
-      const ids = [...new Set(raw.map(Number).filter(Number.isInteger))];
-      const valid = ids.filter(id => known.has(id));
-      ignored += ids.length - valid.length;
-      return { ...t, ids: valid };
-    })
-    .filter(t => t.ids.length);
-
-  let links = 0;
-  if(tags.length){
-    const rows = await sql`
-      insert into tags (user_id, name, color)
-      select ${uid}, n, c from unnest(${tags.map(t => t.name)}::text[], ${tags.map(t => t.color)}::text[]) as x(n, c)
-      on conflict (user_id, lower(name)) do update set name = tags.name
-      returning id, lower(name) as key`;
-    const idByKey = new Map(rows.map(r => [r.key, String(r.id)]));
-    const pairTag = [];
-    const pairDance = [];
-    tags.forEach(t => t.ids.forEach(d => {
-      pairTag.push(idByKey.get(t.name.toLowerCase()));
-      pairDance.push(d);
-    }));
-    const ins = await sql`
-      insert into dance_tags (tag_id, dance_id)
-      select * from unnest(${pairTag}::bigint[], ${pairDance}::int[])
-      on conflict do nothing
-      returning tag_id`;
-    links = ins.length;
-  }
+  const tags = normalizeTags(body.tags, MAX_IMPORT_TAGS).map(t => {
+    const raw = Array.isArray(t.danceIds) ? t.danceIds : (Array.isArray(t.dances) ? t.dances.map(d => d && d.id) : []);
+    return { name: t.name, color: t.color || defaultColor(t.name), ids: raw };
+  });
+  const imported = await mergeTags(sql, uid, tags);
   const state = await loadState(sql, uid);
-  return json(200, { ...state, imported: { tags: tags.length, links, ignoredDances: ignored } });
+  return json(200, { ...state, imported });
 }
 
 exports.handler = async (event, context) => {

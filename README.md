@@ -144,6 +144,12 @@ Account con la stessa email verificata vengono uniti: i tag seguono la persona.
   se il nome esiste già risponde 409 e, con `merge: true`, unisce i due tag
 - `GET /.netlify/functions/tags?action=export` (tutti) oppure `&tags=<id>,<id>` (solo quelli scelti)
 
+### Stelle e condivisione
+- **Stelle (0–5)**: ogni utente autenticato vota un ballo; tutti vedono media e numero di voti, nel dettaglio e nella lista.
+- **Condivisione**: come l'esportazione, si inviano a un altro utente tutti i propri tag, una parte o uno solo (menu
+  "Condividi tag con un utente…" oppure dalla finestra di esportazione); il destinatario li trova in "Messaggi" e
+  aggiunge ai suoi tutti quelli ricevuti, solo alcuni, o rifiuta. Dettagli in [doc/modello-dati.md](doc/modello-dati.md).
+
 ### Ruoli e accesso all'admin
 | Ruolo | Cosa può fare | Come si ottiene |
 |---|---|---|

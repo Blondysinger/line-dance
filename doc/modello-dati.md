@@ -25,6 +25,10 @@ erDiagram
     dances ||--o{ dance_tags : "dance_id"
     system_tags ||--o{ dance_system_tags : "tag_id"
     dances ||--o{ dance_system_tags : "dance_id"
+    app_users ||--o{ dance_ratings : "user_id"
+    dances ||--o{ dance_ratings : "dance_id"
+    app_users ||--o{ tag_shares : "from_user_id"
+    app_users ||--o{ tag_shares : "to_user_id"
 
     dances {
         int id PK "stesso id del JSON storico"
@@ -121,6 +125,21 @@ erDiagram
         int tag_id PK,FK
         int dance_id PK,FK
         int position "ordine sul ballo"
+    }
+    dance_ratings {
+        bigint user_id PK,FK
+        int dance_id PK,FK
+        smallint stars "0-5"
+        timestamptz updated_at
+    }
+    tag_shares {
+        bigserial id PK
+        bigint from_user_id FK
+        bigint to_user_id FK
+        jsonb tags "copia dei tag inviati: nome, colore, balli"
+        text message
+        text status "pending | accepted | declined"
+        int accepted_count "tag accettati"
     }
 ```
 
@@ -235,6 +254,29 @@ Ora:
   Si combina con `tags` (personali) e `level`. La ricerca testuale include i nomi dei tag ufficiali.
 - **Export/import:** non coinvolge i tag ufficiali, che sono già visibili a tutti.
 - **Esistenza:** un tag ufficiale esiste finché almeno un ballo lo usa; togliendolo dall'ultimo ballo viene eliminato.
+
+## Valutazioni a stelle
+
+Ogni utente autenticato dà da 0 a 5 stelle a un ballo, un voto per persona e modificabile (`dance_ratings`, chiave primaria
+`(user_id, dance_id)`, vincolo `stars between 0 and 5`). La media e il numero di voti sono pubblici, calcolati dal DB
+e restituiti con il catalogo (`item.rating = { avg, count }`); il proprio voto si legge con `GET /.netlify/functions/ratings`
+e si cambia con `PUT {danceId, stars}` (`stars: null` lo rimuove). L'impronta del catalogo include i voti, quindi le medie
+si aggiornano anche per gli altri utenti.
+
+## Condivisione dei tag tra utenti
+
+Funziona come un'esportazione inviata a una persona. Un utente sceglie **tutti i suoi tag, una parte o uno solo** (da
+"Condividi tag con un utente…" nel menu, oppure dalla finestra di esportazione con "Condividi con un utente…") e invia a
+un altro utente una **copia**, con nomi, colori e balli in quel momento e un messaggio facoltativo (`tag_shares.tags`).
+Il destinatario trova l'invio in **Messaggi**, con il numero di messaggi in attesa sul menu. Ogni tag ha una casella, tutte
+preselezionate: può aggiungere ai propri tag tutti quelli ricevuti o solo alcuni (unione come per l'import: un tag con lo
+stesso nome viene riusato), oppure rifiutare. Chi invia vede l'esito, ad esempio "Accettati 2 di 3".
+Ognuno resta proprietario dei propri tag: nessuno può leggere o modificare i tag altrui.
+
+- Ricerca destinatari: per nome o email (almeno 2 caratteri); l'email viene mostrata mascherata (`f.c•••@accadi.it`).
+- Limiti: non a se stessi, solo propri tag, massimo 20 condivisioni in attesa per coppia di utenti, messaggio di 500 caratteri al massimo.
+- API: `GET /.netlify/functions/shares` (ricevuti e inviati), `?view=count`, `?view=users&q=`, `POST {toUserId, tagIds, message}`,
+  `POST ?action=respond {id, accept, names?}` (`names`: solo i tag scelti; senza, tutti).
 
 ## Come estendere il modello
 
