@@ -34,6 +34,7 @@
         <button id="loginBtn" class="ghost" type="button">Accedi</button>
         <div id="userMenu" class="userMenu">
           <button id="userMenuBtn" class="ghost userBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+            <span id="menuBadge" class="menuBadge hidden" aria-hidden="true">0</span>
             <span id="userAvatar" class="avatar userOnly hidden" aria-hidden="true"></span>
             <span id="userName" class="userName userOnly hidden">—</span>
             <svg class="icon iconStroke menuIcon guestOnly" viewBox="0 0 24 24" aria-hidden="true">
@@ -42,6 +43,8 @@
           </button>
           <div id="userMenuPanel" class="menuPanel hidden" role="menu">
             <div id="userMenuEmail" class="menuInfo userOnly hidden">—</div>
+            <button id="inboxBtn" class="userOnly hidden" type="button" role="menuitem">Messaggi <span id="inboxCount" class="countPill hidden">0</span></button>
+            <button id="shareTagBtn" class="userOnly hidden" type="button" role="menuitem">Condividi tag con un utente…</button>
             <button id="exportTagsBtn" class="userOnly hidden" type="button" role="menuitem">Esporta tag (JSON)…</button>
             <button id="importTagsBtn" class="userOnly hidden" type="button" role="menuitem">Importa tag (JSON)</button>
             <div class="menuSection" role="group" aria-labelledby="themeMenuLabel">
@@ -89,6 +92,10 @@
             <div class="tagRow">
               <div id="detailTags" class="chips"></div>
               <button id="editTagsBtn" class="chipBtn" type="button">+ Tag</button>
+            </div>
+            <div id="ratingRow" class="ratingRow">
+              <div class="ratingAvg" id="ratingAvg" aria-live="polite"></div>
+              <div class="ratingMine" id="ratingMine"></div>
             </div>
           </div>
           <div class="links">
@@ -269,7 +276,63 @@
       <div class="modalFooter modalFooterActions exportFooter">
         <span id="exportSummary" class="exportSummary muted">—</span>
         <button type="button" class="ghost" data-close="true">Annulla</button>
+        <button id="exportShareBtn" type="button" class="ghost">Condividi con un utente…</button>
         <button id="exportConfirmBtn" type="button" class="primary">Esporta</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="shareModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+    <div class="modalBackdrop" data-close="true"></div>
+    <div class="modalPanel modalPanelSm">
+      <div class="modalHeader">
+        <div id="shareModalTitle" class="modalTitle">Condividi tag</div>
+        <button class="iconBtn" type="button" data-close="true" aria-label="Chiudi">
+          <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true" data-close="true"><path d="M6 6l12 12M18 6l-12 12" data-close="true"></path></svg>
+        </button>
+      </div>
+      <div class="modalBody">
+        <p class="muted shareIntro">Invia a un altro utente una <strong>copia</strong> dei tag scelti, con i loro balli: tutti, una parte o anche uno solo. Sarà lui a decidere se aggiungerli ai suoi; i tuoi tag restano tuoi.</p>
+        <div class="fieldLabel">Tag da condividere
+          <div class="exportTools">
+            <input id="shareTagSearch" type="search" placeholder="Cerca tag…" autocomplete="off" aria-label="Cerca tag" />
+            <button id="shareAllBtn" type="button" class="ghost">Tutti</button>
+            <button id="shareNoneBtn" type="button" class="ghost">Nessuno</button>
+          </div>
+          <ul id="shareTagList" class="exportList shareTagList"></ul>
+          <span id="shareSummary" class="exportSummary muted">—</span>
+        </div>
+        <div class="fieldLabel">Destinatario
+          <div id="shareTo" class="shareTo hidden"></div>
+          <input id="shareSearch" type="search" placeholder="Cerca per nome o email (min. 2 lettere)" autocomplete="off" />
+          <ul id="shareResults" class="shareResults"></ul>
+        </div>
+        <label class="fieldLabel">Messaggio (facoltativo)
+          <textarea id="shareMessage" rows="3" maxlength="500" placeholder="Es. Ecco i balli che ripassiamo giovedì"></textarea>
+        </label>
+      </div>
+      <div class="modalFooter modalFooterActions">
+        <button type="button" class="ghost" data-close="true">Annulla</button>
+        <button id="shareSendBtn" type="button" class="primary" disabled>Invia</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="inboxModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="inboxModalTitle">
+    <div class="modalBackdrop" data-close="true"></div>
+    <div class="modalPanel modalPanelSm modalPanelWide">
+      <div class="modalHeader">
+        <div id="inboxModalTitle" class="modalTitle">Messaggi</div>
+        <button class="iconBtn" type="button" data-close="true" aria-label="Chiudi">
+          <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true" data-close="true"><path d="M6 6l12 12M18 6l-12 12" data-close="true"></path></svg>
+        </button>
+      </div>
+      <div class="modalBody">
+        <div class="inboxTabs" role="tablist">
+          <button id="inboxTabReceived" type="button" role="tab" aria-selected="true">Ricevuti</button>
+          <button id="inboxTabSent" type="button" role="tab" aria-selected="false">Inviati</button>
+        </div>
+        <ul id="inboxList" class="inboxList"></ul>
       </div>
     </div>
   </div>

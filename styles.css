@@ -885,3 +885,131 @@ button.chip.chipLevel:hover{ filter:brightness(1.15); }
 .visuallyHidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 @keyframes skShimmer{ from{ background-position: 200% 0; } to{ background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce){ .skLine, .skBlock{ animation:none; } }
+
+/* ---------- Star ratings ---------- */
+:root{ --star: #fbbf24; }
+.ratingRow{
+  margin-top:10px;
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px;
+}
+.ratingAvg{ display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+.ratingAvg strong{ color:var(--text); font-size:14px; }
+.starBar{ position:relative; display:inline-block; font-size:17px; line-height:1; letter-spacing:1px; }
+.starBarBg{ color: rgb(var(--line-rgb) / .22); }
+.starBarFill{ position:absolute; inset:0 auto 0 0; overflow:hidden; white-space:nowrap; color: var(--star); }
+.ratingMine{ display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.ratingLabel{ font-size:12px; color:var(--muted); }
+.starInput{ display:inline-flex; align-items:center; gap:2px; }
+.starBtn{
+  width:30px; height:30px; padding:0;
+  border:0; border-radius:8px;
+  background:transparent;
+  color: rgb(var(--line-rgb) / .3);
+  font-size:20px; line-height:1;
+}
+.starBtn:hover, .starBtn.on{ color: var(--star); filter:none; }
+.starBtn:hover{ background: rgb(var(--line-rgb) / .06); }
+.starBtn.starZero{
+  width:26px; height:24px; margin-right:4px;
+  font-size:12px; font-weight:700;
+  border:1px solid var(--border);
+  color: var(--muted);
+}
+.starBtn.starZero.on{ background: rgb(var(--accent-rgb) / .2); color: var(--text); border-color: rgb(var(--accent-rgb) / .45); }
+.linkBtn{ height:auto; padding:0; border:0; background:none; color:var(--accent); font-size:12px; }
+.linkBtn:hover{ text-decoration:underline; filter:none; }
+.itemRating{ color: var(--star); white-space:nowrap; }
+
+/* ---------- Menu badge ---------- */
+.userBtn{ position:relative; }
+.menuBadge{
+  position:absolute; top:-6px; right:-6px;
+  min-width:18px; height:18px; padding:0 5px;
+  border-radius:999px;
+  background:#ef4444; color:#fff;
+  font-size:11px; font-weight:700; line-height:18px; text-align:center;
+  box-shadow: 0 0 0 2px var(--bg);
+}
+.countPill{
+  display:inline-grid; place-items:center;
+  min-width:18px; height:18px; padding:0 5px; margin-left:6px;
+  border-radius:999px; background:#ef4444; color:#fff; font-size:11px; font-weight:700;
+}
+
+/* ---------- Share & inbox ---------- */
+.modalPanelWide{ width:min(640px, 94vw); }
+.shareIntro{ margin:0; font-size:13px; }
+.fieldLabel{ display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--muted); }
+.fieldLabel select, .fieldLabel textarea, .fieldLabel input[type="search"]{
+  width:100%;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background: rgb(var(--surface-rgb) / .65);
+  color:var(--text);
+  padding:8px 10px;
+  font: inherit; font-size:14px;
+  outline:none;
+}
+.fieldLabel select{ height:38px; }
+.fieldLabel textarea{ resize:vertical; }
+.shareTo{
+  display:flex; align-items:center; gap:10px;
+  padding:6px 8px;
+  border:1px solid rgb(var(--accent-rgb) / .4);
+  border-radius:12px;
+  background: rgb(var(--accent-rgb) / .1);
+  color: var(--text);
+}
+.shareTo .chipX{ margin-left:auto; }
+.shareToName{ font-weight:700; color:var(--text); font-size:13px; }
+.shareResults{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:2px; max-height:220px; overflow:auto; }
+.shareResults li.muted{ padding:6px 4px; font-size:13px; }
+.shareUser{
+  width:100%; height:auto; padding:6px 8px;
+  display:flex; align-items:center; gap:10px;
+  border:0; border-radius:10px; background:transparent; text-align:left;
+  font-size:12px;
+}
+.shareUser:hover{ background: rgb(var(--accent-rgb) / .1); filter:none; }
+
+.inboxTabs{ display:grid; grid-template-columns: 1fr 1fr; gap:4px; padding:3px; border-radius:12px; background: rgb(var(--line-rgb) / .06); }
+.inboxTabs button{ height:32px; border:0; border-radius:9px; background:transparent; color:var(--muted); font-size:13px; }
+.inboxTabs button[aria-selected="true"]{ background: rgb(var(--accent-rgb) / .2); color:var(--text); font-weight:700; }
+.inboxList{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.inboxEmpty{ padding:14px 4px; font-size:13px; }
+.inboxItem{
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background: rgb(var(--surface-rgb) / .5);
+  display:flex; flex-direction:column; gap:8px;
+}
+.inboxItem.unread{ border-color: rgb(var(--accent-rgb) / .5); box-shadow: inset 3px 0 0 rgb(var(--accent-rgb) / .8); }
+.inboxHead{ display:flex; align-items:center; gap:10px; font-size:13px; }
+.inboxWho{ flex:1; min-width:0; }
+.inboxWhen{ font-size:11px; white-space:nowrap; }
+.inboxTag{ display:flex; align-items:center; gap:8px; font-size:12px; }
+.inboxMsg{
+  margin:0; padding:6px 10px;
+  border-left:3px solid rgb(var(--accent-rgb) / .5);
+  background: rgb(var(--line-rgb) / .04);
+  border-radius:0 10px 10px 0;
+  font-size:13px; white-space:pre-wrap; word-break:break-word;
+}
+.inboxFoot{ display:flex; gap:8px; justify-content:flex-end; align-items:center; }
+.shareStatus{ font-size:12px; padding:3px 9px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
+.shareStatus.accepted{ color: var(--accent2); border-color: rgb(var(--accent2-rgb) / .45); }
+.shareStatus.declined{ color: #ef4444; border-color: rgba(239, 68, 68, .45); }
+:root[data-theme="light"]{ --star: #d97706; }
+
+/* Share: tag list + received tags */
+.shareTagList{ max-height:min(30vh, 240px); }
+.inboxTags{ display:flex; flex-direction:column; gap:4px; }
+.inboxTagRow{ display:flex; align-items:center; gap:8px; font-size:12px; }
+label.inboxTagRow{ cursor:pointer; }
+.inboxTagRow input[type="checkbox"]{ width:16px; height:16px; accent-color: var(--accent2); }
+@media (max-width: 700px){
+  .exportFooter{ flex-wrap:wrap; }
+  .exportFooter .exportSummary{ flex-basis:100%; margin:0 0 2px; }
+  .exportFooter button{ flex:1 1 auto; }
+}

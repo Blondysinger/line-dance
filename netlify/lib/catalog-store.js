@@ -214,6 +214,7 @@ function recordToItem(r, cfg){
     media: r.media,
     systemTags: r.systemTags || [],
     version: r.version,
+    rating: r.rating,
   };
   cfg.providers.forEach(p => {
     const f = providerFields(p);
@@ -657,7 +658,9 @@ async function listDances(sql, { offset = 0, limit = 25, level = null, tagIds = 
                 where p.dance_id = f.id), '{}') as properties,
       coalesce((select json_agg(json_build_object('id', st.id, 'name', st.name, 'color', st.color) order by x.position)
                 from dance_system_tags x join system_tags st on st.id = x.tag_id
-                where x.dance_id = f.id), '[]') as system_tags
+                where x.dance_id = f.id), '[]') as system_tags,
+      (select round(avg(stars)::numeric, 2) from dance_ratings dr where dr.dance_id = f.id) as rating_avg,
+      (select count(*)::int from dance_ratings dr where dr.dance_id = f.id) as rating_count
     from filtered f
     order by f.sort_order, f.id
     limit ${limit}::int offset ${offset}::int`;
@@ -675,6 +678,7 @@ async function listDances(sql, { offset = 0, limit = 25, level = null, tagIds = 
     properties: r.properties,
     media: r.media,
     systemTags: r.system_tags,
+    rating: { avg: r.rating_avg == null ? null : Number(r.rating_avg), count: r.rating_count || 0 },
     version: r.version,
   }, cfg));
   const total = rows.length ? Number(rows[0].total) : (offset === 0 ? 0 : null);
