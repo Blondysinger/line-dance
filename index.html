@@ -3,8 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <script src="./theme.js"></script>
   <title>Line Dance Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@500;700;800&display=swap" />
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./theme.css" />
 </head>
 <body>
   <header class="topbar">
@@ -17,12 +23,44 @@
 
     <div class="actions">
       <input id="searchInput" type="search" placeholder="Cerca… (ballo, brano, note, dettagli)" autocomplete="off" />
-      <select id="yearFilter" aria-label="Filtro anno">
-        <option value="">Tutti gli anni</option>
+      <select id="yearFilter" aria-label="Filtro difficoltà">
+        <option value="">Tutte le difficoltà</option>
+      </select>
+      <select id="tagFilter" class="hidden" aria-label="Filtro per tag">
+        <option value="">Filtra per tag…</option>
       </select>
       <button id="clearBtn" class="ghost" title="Pulisci ricerca">Pulisci</button>
+      <div id="userArea" class="userArea">
+        <button id="loginBtn" class="ghost" type="button">Accedi</button>
+        <div id="userMenu" class="userMenu">
+          <button id="userMenuBtn" class="ghost userBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+            <span id="userAvatar" class="avatar userOnly hidden" aria-hidden="true"></span>
+            <span id="userName" class="userName userOnly hidden">—</span>
+            <svg class="icon iconStroke menuIcon guestOnly" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16"></path>
+            </svg>
+          </button>
+          <div id="userMenuPanel" class="menuPanel hidden" role="menu">
+            <div id="userMenuEmail" class="menuInfo userOnly hidden">—</div>
+            <button id="exportTagsBtn" class="userOnly hidden" type="button" role="menuitem">Esporta tag (JSON)…</button>
+            <button id="importTagsBtn" class="userOnly hidden" type="button" role="menuitem">Importa tag (JSON)</button>
+            <div class="menuSection" role="group" aria-labelledby="themeMenuLabel">
+              <div id="themeMenuLabel" class="menuLabel">Tema</div>
+              <div class="themeSwitch">
+                <button type="button" role="menuitemradio" data-theme-choice="system" aria-checked="false">Automatico</button>
+                <button type="button" role="menuitemradio" data-theme-choice="light" aria-checked="false">Chiaro</button>
+                <button type="button" role="menuitemradio" data-theme-choice="dark" aria-checked="false">Scuro</button>
+              </div>
+            </div>
+            <button id="logoutBtn" class="userOnly hidden" type="button" role="menuitem">Esci</button>
+          </div>
+          <input id="importTagsFile" type="file" accept="application/json,.json" hidden />
+        </div>
+      </div>
       <a id="loginLink" class="btnLink" href="/admin/" rel="noopener">Admin</a>
     </div>
+
+    <div id="tagFilterChips" class="filterChips hidden" aria-label="Tag selezionati"></div>
   </header>
 
   <main class="layout">
@@ -35,13 +73,22 @@
     </section>
 
     <section class="detail" aria-label="Dettaglio selezione">
+      <div id="detailLoading" class="detailLoading" role="status">
+        <div class="skLine skHead"></div>
+        <div class="skLine skChips"></div>
+        <div class="skBlock"></div>
+        <span class="visuallyHidden">Caricamento del catalogo…</span>
+      </div>
       <div id="detailView" class="detailView hidden">
         <div class="detailTop">
-          <div>
-            <h2 id="detailTitle">—</h2>
+          <div class="detailHead">
+            <h2 id="detailTitle" class="danceTitle">—</h2>
             <div class="meta">
-              <span class="pill" id="detailYear">Anno —</span>
               <span class="pill" id="detailStyle">—</span>
+            </div>
+            <div class="tagRow">
+              <div id="detailTags" class="chips"></div>
+              <button id="editTagsBtn" class="chipBtn" type="button">+ Tag</button>
             </div>
           </div>
           <div class="links">
@@ -50,40 +97,10 @@
         </div>
 
         <div class="detailGrid">
-          <div class="card videoCard">
-            <div class="cardTitle cardTitleRow">
-              <span>YouTube</span>
-              <div class="videoControls">
-                <button id="ytStartBtn" class="iconBtn" type="button" aria-label="Riproduci dall'inizio" title="Riproduci dall'inizio">
-                  <svg class="icon iconFill" viewBox="0 0 24 24" aria-hidden="true">
-                    <polygon points="8,6 19,12 8,18"></polygon>
-                  </svg>
-                </button>
-                <button id="ytDanceBtn" class="iconBtn" type="button" aria-label="Riproduci parte ballata" title="Riproduci parte ballata">
-                  <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="4.5" r="2.5"></circle>
-                    <path d="M12 7.5l-1 5-3 2.5M12 7.5l4 2.5M11 12.5l-5 7M12 12.5l4.5 6.5"></path>
-                  </svg>
-                </button>
-                <button id="ytSizeToggleBtn" class="iconBtn" type="button" aria-label="Espandi o riduci video" title="Espandi o riduci video" aria-pressed="false">
-                  <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 10V4h6M20 14v6h-6M14 4h6v6M4 20h6v-6"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <iframe id="ytFrame" class="frame videoFrame" title="YouTube video"
-              loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen></iframe>
-            <div class="cardFooter">
-              <a id="ytSearchLink" target="_blank" rel="noopener">Apri ricerca su YouTube</a>
-            </div>
-          </div>
+          <div id="videoColumn" class="videoColumn" aria-label="Video YouTube"></div>
 
           <div class="sideColumn">
-            <div class="card spotifyCard">
+            <div class="card musicCard spotifyCard">
               <div class="cardTitle cardTitleRow">
                 <span>Spotify</span>
                 <span class="tooltipWrap" aria-hidden="true">
@@ -91,12 +108,23 @@
                   <span class="tooltipText">La riproduzione può variare in base all'account (Free/Premium) e alle policy di Spotify.</span>
                 </span>
               </div>
-              <div id="spotifyContainer" class="spotifyContainer">
-                <div class="spotifyPlaceholder">
-                  <p><strong>Embed non disponibile</strong> (manca un link/URI Spotify nel dataset).</p>
-                  <p>Intanto ti apro la ricerca su Spotify col nome brano.</p>
-                  <a id="spSearchLink" class="primaryLink" target="_blank" rel="noopener">Cerca su Spotify</a>
-                </div>
+              <div id="spotifyContainer" class="musicContainer"></div>
+              <div class="cardFooter">
+                <a id="spotifyAppLink" target="_blank" rel="noopener">Apri in Spotify</a>
+              </div>
+            </div>
+
+            <div class="card musicCard amazonCard">
+              <div class="cardTitle cardTitleRow">
+                <span>Amazon Music</span>
+                <span class="tooltipWrap" aria-hidden="true">
+                  <span class="helpDot">?</span>
+                  <span class="tooltipText">L'anteprima è un estratto: l'ascolto completo dipende dall'abbonamento Amazon Music.</span>
+                </span>
+              </div>
+              <div id="amazonContainer" class="musicContainer"></div>
+              <div class="cardFooter">
+                <a id="amazonAppLink" target="_blank" rel="noopener">Apri in Amazon Music</a>
               </div>
             </div>
 
@@ -114,6 +142,11 @@
 
                 <h3>Coreografia di</h3>
                 <p id="detailChoreo" class="muted">—</p>
+
+                <div id="extraLinksWrap" class="hidden">
+                  <h3>Altri link</h3>
+                  <ul id="extraLinks" class="extraLinks"></ul>
+                </div>
               </div>
             </div>
           </div>
@@ -122,6 +155,40 @@
       </div>
     </section>
   </main>
+
+  <template id="videoCardTpl">
+    <div class="card videoCard">
+      <div class="cardTitle cardTitleRow">
+        <span class="videoTitle">YouTube</span>
+        <div class="videoControls">
+          <button class="iconBtn" type="button" data-action="start" aria-label="Riproduci dall'inizio" title="Riproduci dall'inizio">
+            <svg class="icon iconFill" viewBox="0 0 24 24" aria-hidden="true">
+              <polygon points="8,6 19,12 8,18"></polygon>
+            </svg>
+          </button>
+          <button class="iconBtn" type="button" data-action="dance" aria-label="Riproduci parte ballata" title="Riproduci parte ballata">
+            <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="4.5" r="2.5"></circle>
+              <path d="M12 7.5l-1 5-3 2.5M12 7.5l4 2.5M11 12.5l-5 7M12 12.5l4.5 6.5"></path>
+            </svg>
+          </button>
+          <button class="iconBtn" type="button" data-action="size" aria-label="Espandi o riduci video" title="Espandi o riduci video" aria-pressed="false">
+            <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 10V4h6M20 14v6h-6M14 4h6v6M4 20h6v-6"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <iframe class="frame videoFrame" title="YouTube video"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+      <div class="cardFooter">
+        <a class="videoLink" target="_blank" rel="noopener">Apri su YouTube</a>
+      </div>
+    </div>
+  </template>
 
   <script src="./app.js" defer></script>
   <div id="stepsheetModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Stepsheet">
@@ -146,6 +213,96 @@
       </div>
     </div>
   </div>
+
+  <div id="tagModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tagModalTitle">
+    <div class="modalBackdrop" data-close="true"></div>
+    <div class="modalPanel modalPanelSm">
+      <div class="modalHeader">
+        <div id="tagModalTitle" class="modalTitle">Tag</div>
+        <button class="iconBtn" type="button" data-close="true" aria-label="Chiudi">
+          <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true" data-close="true">
+            <path d="M6 6l12 12M18 6l-12 12" data-close="true"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modalBody">
+        <div id="tagEditorChips" class="chips chipsEditor"></div>
+        <div id="tagColorPanel" class="colorPanel hidden" aria-label="Colore del tag"></div>
+        <form id="tagAddForm" class="tagAddForm" autocomplete="off">
+          <input id="tagInput" type="text" maxlength="40" list="tagSuggestions" placeholder="Scrivi un tag e premi Invio" aria-label="Nuovo tag" />
+          <button type="submit">Aggiungi</button>
+        </form>
+        <datalist id="tagSuggestions"></datalist>
+        <div id="tagSuggestWrap" class="suggestWrap hidden">
+          <div class="suggestLabel">I tuoi tag</div>
+          <div id="tagSuggestChips" class="chips"></div>
+        </div>
+        <p class="smallPrint">Tocca il pallino di un tag per rinominarlo o sceglierne il colore, la × per rimuoverlo da questo ballo. Nome e colore valgono per quel tag su tutti i balli.</p>
+      </div>
+      <div class="modalFooter modalFooterActions">
+        <button type="button" class="ghost" data-close="true">Annulla</button>
+        <button id="tagSaveBtn" type="button" class="primary">Salva</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="exportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
+    <div class="modalBackdrop" data-close="true"></div>
+    <div class="modalPanel modalPanelSm">
+      <div class="modalHeader">
+        <div id="exportModalTitle" class="modalTitle">Esporta tag</div>
+        <button class="iconBtn" type="button" data-close="true" aria-label="Chiudi">
+          <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true" data-close="true">
+            <path d="M6 6l12 12M18 6l-12 12" data-close="true"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modalBody">
+        <p class="muted exportIntro">Scegli quali tag esportare: tutti, una parte o anche uno solo. Ogni tag porta con sé colore e balli associati.</p>
+        <div class="exportTools">
+          <input id="exportSearch" type="search" placeholder="Cerca tag…" autocomplete="off" aria-label="Cerca tag" />
+          <button id="exportAllBtn" type="button" class="ghost">Tutti</button>
+          <button id="exportNoneBtn" type="button" class="ghost">Nessuno</button>
+        </div>
+        <ul id="exportList" class="exportList"></ul>
+      </div>
+      <div class="modalFooter modalFooterActions exportFooter">
+        <span id="exportSummary" class="exportSummary muted">—</span>
+        <button type="button" class="ghost" data-close="true">Annulla</button>
+        <button id="exportConfirmBtn" type="button" class="primary">Esporta</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loginModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+    <div class="modalBackdrop" data-close="true"></div>
+    <div class="modalPanel modalPanelSm">
+      <div class="modalHeader">
+        <div id="loginModalTitle" class="modalTitle">Accedi</div>
+        <button class="iconBtn" type="button" data-close="true" aria-label="Chiudi">
+          <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true" data-close="true">
+            <path d="M6 6l12 12M18 6l-12 12" data-close="true"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modalBody loginBody">
+        <p class="muted">Accedi per salvare i tuoi tag personali sui balli.</p>
+        <a id="loginGoogle" class="providerBtn hidden" href="#">
+          <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.6 3.9-5.5 3.9-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.3 14.6 2.3 12 2.3 6.7 2.3 2.4 6.6 2.4 12s4.3 9.7 9.6 9.7c5.5 0 9.2-3.9 9.2-9.4 0-.6-.1-1.1-.2-1.6H12z"/></svg>
+          Continua con Google
+        </a>
+        <a id="loginFacebook" class="providerBtn hidden" href="#">
+          <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><path fill="#1877F2" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v2.9h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>
+          Continua con Facebook
+        </a>
+        <button id="loginNetlify" class="providerBtn" type="button">Account del sito (Netlify Identity)</button>
+        <p id="loginNote" class="smallPrint"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
     (function(){

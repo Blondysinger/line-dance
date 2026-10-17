@@ -1,0 +1,56 @@
+/* Theme tokens shared by the site and the admin.
+ * Dark is the original look; light redefines the same tokens.
+ * <html data-theme="dark|light"> is set by theme.js before first paint. */
+:root{
+  color-scheme: dark;
+  --page-bg: radial-gradient(1200px 800px at 20% 0%, #152247 0%, #0b0f17 50%, #070a10 100%);
+  --surface-rgb: 16 24 38;      /* panels, inputs */
+  --surface2-rgb: 15 22 35;     /* cards, modals */
+  --bar-rgb: 11 15 23;          /* sticky top bars */
+  --line-rgb: 231 236 244;      /* borders, dividers, hover ink */
+  --muted-rgb: 169 180 199;
+  --accent-rgb: 122 162 255;
+  --accent2-rgb: 52 211 153;
+  --contrast-rgb: 255 255 255;  /* outlines drawn on top of colors */
+  --backdrop-rgb: 5 8 14;
+  --soft-text: #d7e3ff;
+  --soft-text2: #c9d4ea;
+  --warn-text: #ffe7a8;
+  --danger-text: #ffd1d1;
+}
+
+:root[data-theme="light"]{
+  color-scheme: light;
+  --bg: #f4f6fb;
+  --panel: #ffffff;
+  --panel2: #f6f8fc;
+  --text: #0f172a;
+  --muted: #4b5a70;
+  --border: rgb(15 23 42 / .12);
+  --accent: #2563eb;
+  --accent2: #059669;
+  --shadow: 0 8px 24px rgba(15, 23, 42, .08);
+  --page-bg: radial-gradient(1200px 800px at 20% 0%, #dfe8ff 0%, #f4f6fb 50%, #eef1f7 100%);
+  --surface-rgb: 255 255 255;
+  --surface2-rgb: 248 250 253;
+  --bar-rgb: 255 255 255;
+  --line-rgb: 15 23 42;
+  --muted-rgb: 75 90 112;
+  --accent-rgb: 37 99 235;
+  --accent2-rgb: 5 150 105;
+  --contrast-rgb: 15 23 42;
+  --backdrop-rgb: 15 23 42;
+  --soft-text: #1e40af;
+  --soft-text2: #334155;
+  --warn-text: #92400e;
+  --danger-text: #b91c1c;
+}
+
+/* Embedded players (Spotify, Amazon, YouTube, stepsheets) are light-scheme
+ * documents: when the iframe's scheme differs from theirs Chrome paints an
+ * opaque WHITE backdrop under them (visible while loading and around rounded
+ * players). Declaring iframes "light" matches them and keeps them transparent.
+ * Music players also get a transparent background and rounded corners, so the
+ * theme color shows around their own rounded card. */
+iframe{ color-scheme: light; }
+.musicContainer iframe{ background: transparent; border-radius: 12px; }

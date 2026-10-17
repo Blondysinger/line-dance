@@ -1,4 +1,6 @@
-const { neon } = require("@neondatabase/serverless");
+const { getSql } = require("../lib/db");
+const { syncCatalog, CatalogError } = require("../lib/catalog-store");
+const { requireRole } = require("../lib/users");
 
 function parseBody(event){
   if(!event.body) return null;
@@ -9,36 +11,36 @@ function parseBody(event){
   }
 }
 
+// BULK write: replaces the whole catalog. The admin saves dance by dance
+// (dance.js); this endpoint is kept for explicit bulk tools and refuses to
+// run unless the caller proves it read the current catalog:
+//   POST { items, replaceAll: true, revision: "<catalog?view=meta revision>" }
 exports.handler = async (event, context) => {
   if(event.httpMethod !== "POST"){
     return { statusCode: 405, body: "Method not allowed" };
   }
-  if(!context.clientContext || !context.clientContext.user){
-    return { statusCode: 401, body: "Unauthorized" };
-  }
+  const auth = await requireRole(event, context, "editor");
+  if(!auth.user) return { statusCode: auth.status, body: auth.message };
 
   const data = parseBody(event);
   if(!data || !Array.isArray(data.items)){
     return { statusCode: 400, body: "Invalid payload" };
   }
+  if(data.replaceAll !== true || !data.revision){
+    return { statusCode: 400, body: "Salvataggio dell'intero catalogo: servono replaceAll: true e la revision corrente" };
+  }
 
   try{
-    const conn = process.env.NEON_DATABASE_URL || process.env.NETLIFY_DATABASE_URL;
-    if(!conn){
-      return { statusCode: 500, body: "Missing DB connection" };
-    }
-    const sql = neon(conn);
-    const payload = JSON.stringify(data);
-    const query = process.env.DANCES_SQL_WRITE || "update line_dance_data set data = $1::jsonb";
-    const res = await sql(query, [payload]);
-
-    // If update affected 0 rows, insert one
-    if(res && res.length === 0 && query.toLowerCase().startsWith("update")){
-      await sql("insert into line_dance_data (data) values ($1::jsonb)", [payload]);
-    }
-
-    return { statusCode: 200, body: "ok" };
+    const result = await syncCatalog(getSql(), data.items, { mirror: true, expectedRevision: data.revision });
+    return {
+      statusCode: 200,
+      headers: { "content-type": "application/json; charset=utf-8" },
+      body: JSON.stringify({ ok: true, ...result }),
+    };
   }catch(err){
+    if(err instanceof CatalogError && err.code === "CATALOG_REVISION_CONFLICT"){
+      return { statusCode: 409, body: "Il catalogo è stato modificato nel frattempo: ricarica prima del salvataggio bulk" };
+    }
     return { statusCode: 500, body: `Error: ${err && err.message ? err.message : "unknown"}` };
   }
 };

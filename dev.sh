@@ -37,7 +37,7 @@ start() {
   fi
   echo "{\"mode\":\"${mode}\"}" > "${ROOT_DIR}/data-mode.json"
   echo "Starting Netlify Dev..."
-  nohup npx netlify dev > "${LOG_FILE}" 2>&1 &
+  nohup npx -y netlify-cli@27.11.2 dev > "${LOG_FILE}" 2>&1 &
   echo $! > "${PID_FILE}"
   echo "Started (pid $(cat "${PID_FILE}")). Mode: ${mode}. Log: ${LOG_FILE}"
 }
