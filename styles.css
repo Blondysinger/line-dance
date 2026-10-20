@@ -453,12 +453,6 @@ body.videoExpanded .videoFrame{
 }
 .modalTitle{ font-weight:700; font-size:13px; }
 .modalActions{ display:flex; gap:8px; align-items:center; }
-.modalFrame{
-  width:100%;
-  height:100%;
-  border:0;
-  background:var(--bg);
-}
 .modalFooter{
   padding:8px 12px;
   border-top:1px solid rgb(var(--line-rgb) / .08);
@@ -704,7 +698,6 @@ button.chip{ cursor:pointer; }
   .userBtn{ max-width:160px; }
   .modalPanelSm{ width:100vw; max-height:92vh; border-radius: var(--radius2) var(--radius2) 0 0; align-self:end; }
   .modal{ place-items:end center; }
-  .modal#stepsheetModal{ place-items:center; }
   .toast{ left:16px; right:16px; }
 }
 
@@ -1013,3 +1006,28 @@ label.inboxTagRow{ cursor:pointer; }
   .exportFooter .exportSummary{ flex-basis:100%; margin:0 0 2px; }
   .exportFooter button{ flex:1 1 auto; }
 }
+
+/* User menu: never wider than the screen; opens to the right when the
+   button sits on the left (wrapped topbar on mobile). */
+.menuPanel{ max-width: calc(100vw - 16px); }
+.menuPanel.menuLeft{ right:auto; left:0; }
+
+/* Received tags: editable name before accepting */
+.inboxTagRow{ flex-wrap:wrap; }
+.inboxTagName{
+  --chip: var(--accent);
+  height:28px; min-width:0; width:min(220px, 55vw);
+  padding:0 10px 0 22px;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--chip) 55%, transparent);
+  background:
+    radial-gradient(circle at 11px 50%, var(--chip) 0 4.5px, transparent 5px),
+    color-mix(in srgb, var(--chip) 18%, rgb(var(--surface-rgb) / .8));
+  color: var(--text);
+  font: inherit; font-size:12px;
+  outline:none;
+}
+.inboxTagName:focus{ border-color: var(--chip); box-shadow: 0 0 0 2px color-mix(in srgb, var(--chip) 30%, transparent); }
+.inboxTagName:disabled{ opacity:.45; }
+.inboxWarn{ flex-basis:100%; padding-left:26px; font-size:11.5px; color:#d97706; }
+.inboxTagRow.merging .inboxTagName{ border-style:dashed; }

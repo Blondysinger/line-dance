@@ -11,7 +11,9 @@ const { mergeTags } = require("../lib/tags-store");
 //   GET  ?view=count                           -> { pending }   (cheap, for polling)
 //   GET  ?view=users&q=…                       -> users to share with (name + masked email)
 //   POST {toUserId, tagIds, message}           -> send
-//   POST ?action=respond {id, accept, names?}  -> accept (all, or only `names`) / decline
+//   POST ?action=respond {id, accept, items?}  -> accept / decline; items =
+//        [{name, as}]: only these tags, each saved under the name `as`
+//        (rename before accepting, to keep it apart from an own tag)
 const MAX_PENDING_PER_PAIR = 20;
 
 function maskEmail(email){
@@ -88,11 +90,19 @@ exports.handler = async (event, context) => {
       let imported = null;
       let chosen = [];
       if(body.accept){
-        // Accept all the tags, or only those named in `names`.
-        const wanted = Array.isArray(body.names) ? new Set(body.names.map(n => String(n).toLowerCase())) : null;
-        chosen = (s.tags || []).filter(t => !wanted || wanted.has(String(t.name).toLowerCase()));
+        // Accept all the tags, or only the chosen ones, optionally renamed.
+        const cleanName = (v) => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, 40);
+        let wanted = null;
+        if(Array.isArray(body.items)){
+          wanted = new Map(body.items.map(i => [String(i && i.name).toLowerCase(), cleanName(i && (i.as ?? i.name))]));
+        } else if(Array.isArray(body.names)){
+          wanted = new Map(body.names.map(n => [String(n).toLowerCase(), cleanName(n)]));
+        }
+        chosen = (s.tags || []).filter(t => !wanted || wanted.has(String(t.name).toLowerCase()))
+          .map(t => ({ ...t, as: wanted ? wanted.get(String(t.name).toLowerCase()) : t.name }));
         if(!chosen.length) return text(400, "Nessun tag selezionato");
-        imported = await mergeTags(sql, uid, chosen.map(t => ({ name: t.name, color: t.color, ids: t.dance_ids })));
+        if(chosen.some(t => !t.as)) return text(400, "Ogni tag accettato deve avere un nome");
+        imported = await mergeTags(sql, uid, chosen.map(t => ({ name: t.as, color: t.color, ids: t.dance_ids })));
       }
       await sql`
         update tag_shares set status = ${body.accept ? "accepted" : "declined"},
