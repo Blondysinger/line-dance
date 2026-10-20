@@ -99,7 +99,7 @@
             </div>
           </div>
           <div class="links">
-            <a id="stepsheetLink" class="ghostLink" href="#" rel="noopener">Stepsheet</a>
+            <a id="stepsheetLink" class="ghostLink" href="#" target="_blank" rel="noopener noreferrer">Stepsheet</a>
           </div>
         </div>
 
@@ -198,28 +198,6 @@
   </template>
 
   <script src="./app.js" defer></script>
-  <div id="stepsheetModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Stepsheet">
-    <div class="modalBackdrop" data-close="true"></div>
-    <div class="modalPanel">
-      <div class="modalHeader">
-        <div class="modalTitle">Stepsheet</div>
-        <div class="modalActions">
-          <a id="stepsheetOpenNew" class="ghostLink" target="_blank" rel="noopener">Apri in nuova scheda</a>
-          <button id="stepsheetClose" class="iconBtn" type="button" aria-label="Chiudi">
-            <svg class="icon iconStroke" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 6l12 12M18 6l-12 12"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <iframe id="stepsheetFrame" class="modalFrame" title="Stepsheet"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"></iframe>
-      <div class="modalFooter">
-        <span class="muted">Se il contenuto non si carica (blocco del sito), usa “Apri in nuova scheda”.</span>
-      </div>
-    </div>
-  </div>
 
   <div id="tagModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tagModalTitle">
     <div class="modalBackdrop" data-close="true"></div>

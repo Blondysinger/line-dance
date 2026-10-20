@@ -269,14 +269,15 @@ Funziona come un'esportazione inviata a una persona. Un utente sceglie **tutti i
 "Condividi tag con un utente…" nel menu, oppure dalla finestra di esportazione con "Condividi con un utente…") e invia a
 un altro utente una **copia**, con nomi, colori e balli in quel momento e un messaggio facoltativo (`tag_shares.tags`).
 Il destinatario trova l'invio in **Messaggi**, con il numero di messaggi in attesa sul menu. Ogni tag ha una casella, tutte
-preselezionate: può aggiungere ai propri tag tutti quelli ricevuti o solo alcuni (unione come per l'import: un tag con lo
-stesso nome viene riusato), oppure rifiutare. Chi invia vede l'esito, ad esempio "Accettati 2 di 3".
+preselezionate, e un **nome modificabile**: può aggiungere ai propri tag tutti quelli ricevuti o solo alcuni, oppure
+rifiutare. Se un nome coincide con un suo tag compare un avviso: lasciandolo, i balli si aggiungono a quel tag (unione
+come per l'import); rinominandolo, per esempio "preferiti di Mario", il tag ricevuto resta separato. Chi invia vede l'esito, ad esempio "Accettati 2 di 3".
 Ognuno resta proprietario dei propri tag: nessuno può leggere o modificare i tag altrui.
 
 - Ricerca destinatari: per nome o email (almeno 2 caratteri); l'email viene mostrata mascherata (`f.c•••@accadi.it`).
 - Limiti: non a se stessi, solo propri tag, massimo 20 condivisioni in attesa per coppia di utenti, messaggio di 500 caratteri al massimo.
 - API: `GET /.netlify/functions/shares` (ricevuti e inviati), `?view=count`, `?view=users&q=`, `POST {toUserId, tagIds, message}`,
-  `POST ?action=respond {id, accept, names?}` (`names`: solo i tag scelti; senza, tutti).
+  `POST ?action=respond {id, accept, items?}` (`items: [{name, as}]`: solo i tag scelti, ciascuno salvato con il nome `as`; senza, tutti con il nome originale).
 
 ## Come estendere il modello
 

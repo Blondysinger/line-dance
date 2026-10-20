@@ -11,7 +11,6 @@ const state = {
   filtered: [],
   selectedId: null,
   cursorIndex: -1,
-  stepsheetUrl: "",
 };
 
 const tagState = {
@@ -638,11 +637,12 @@ function buildListItem(it, idx){
 
   li.appendChild(box);
 
-  li.addEventListener("click", ()=> selectById(it.id, idx));
+  li.addEventListener("click", ()=>{ selectById(it.id, idx); revealDetail(); });
   li.addEventListener("keydown", (e)=>{
     if(e.key === "Enter" || e.key === " "){
       e.preventDefault();
       selectById(it.id, idx);
+      revealDetail();
     }
   });
   return li;
@@ -684,6 +684,22 @@ function appendListItems(start){
   const s = $("listSentinel");
   if(s) list.insertBefore(frag, s); else list.appendChild(frag);
   placeSentinel();
+}
+
+// After the user picks a dance: when the detail sits below the list (mobile
+// and narrow tablets), scroll to the start of its card so the chosen dance is
+// in view right away. Side-by-side (desktop) nothing moves.
+function revealDetail(){
+  const detail = document.querySelector(".detail");
+  const master = document.querySelector(".master");
+  if(!detail || !master) return;
+  const stacked = detail.getBoundingClientRect().top >= master.getBoundingClientRect().bottom - 1;
+  if(!stacked) return;
+  const bar = document.querySelector(".topbar");
+  const offset = (bar ? bar.getBoundingClientRect().height : 0) + 8;
+  const top = window.scrollY + detail.getBoundingClientRect().top - offset;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: Math.max(0, top), behavior: reduce ? "auto" : "smooth" });
 }
 
 function clearSelection(){
@@ -839,17 +855,16 @@ function renderDetail(it){
   renderRating(it);
   renderExtraLinks(it);
 
-  // Stepsheet link (if it's a URL, open it; else hide)
+  // Stepsheet: opens the external page in a new tab (embedding it is blocked
+  // or blurred by most stepsheet sites); hidden when there is no URL.
   const stepsheet = safe(it.stepsheetUrl || it.stepsheetUrlTitle);
   const stepsheetLink = $("stepsheetLink");
   if(/^https?:\/\//i.test(stepsheet)){
     stepsheetLink.href = stepsheet;
     stepsheetLink.style.display = "inline-flex";
-    state.stepsheetUrl = stepsheet;
   } else {
     stepsheetLink.href = "#";
     stepsheetLink.style.display = "none";
-    state.stepsheetUrl = "";
   }
 
   const q = song || dance || "";
@@ -1151,7 +1166,9 @@ function wireAuth(){
   const setMenu = (open)=>{
     panel.classList.toggle("hidden", !open);
     menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    if(open) placeMenuPanel(panel);
   };
+  window.addEventListener("resize", ()=>{ if(!panel.classList.contains("hidden")) placeMenuPanel(panel); });
   menuBtn.addEventListener("click", (e)=>{
     e.stopPropagation();
     setMenu(panel.classList.contains("hidden"));
@@ -1173,6 +1190,23 @@ function wireAuth(){
     params.delete("authError");
     const qs = params.toString();
     history.replaceState(null, "", location.pathname + (qs ? `?${qs}` : "") + location.hash);
+  }
+}
+
+// The panel opens towards the side with room: right-aligned to the button on
+// desktop (button at the right), left-aligned when the topbar wraps on
+// mobile and the button ends up on the left. Never wider than the screen.
+function placeMenuPanel(panel){
+  const margin = 8;
+  panel.classList.remove("menuLeft");
+  const r = panel.getBoundingClientRect();
+  if(r.left < margin) panel.classList.add("menuLeft");
+  const r2 = panel.getBoundingClientRect();
+  if(r2.right > window.innerWidth - margin){
+    // Still overflowing on very narrow screens: shift it back inside.
+    panel.style.transform = `translateX(${Math.round(window.innerWidth - margin - r2.right)}px)`;
+  } else {
+    panel.style.transform = "";
   }
 }
 
@@ -1537,35 +1571,76 @@ function renderInbox(){
     when.textContent = new Date(r.createdAt).toLocaleString("it-IT", { dateStyle: "short", timeStyle: "short" });
     head.append(makeAvatar(other), who, when);
 
-    // Received and still pending: one checkbox per tag (all preselected).
+    // Received and still pending: one row per tag with a checkbox (all
+    // preselected) and an editable name, to keep it apart from an own tag
+    // with the same name instead of merging into it.
     const pickable = tab === "received" && r.status === "pending";
-    const picked = new Set(r.tags.map(t => t.name));
+    const picked = new Map(r.tags.map(t => [t.name, t.name]));   // original name -> name to save
     const tagBox = document.createElement("div");
     tagBox.className = "inboxTags";
+    const own = () => new Map(sortedTags().map(t => [t.name.toLowerCase(), t.name]));
+    const refresh = ()=>{
+      const mine = own();
+      const chosenNames = [...picked.values()].map(v => cleanTagName(v).toLowerCase());
+      tagBox.querySelectorAll(".inboxTagRow").forEach(row => {
+        const orig = row.dataset.name;
+        const warn = row.querySelector(".inboxWarn");
+        if(!warn) return;
+        const as = picked.has(orig) ? cleanTagName(picked.get(orig)) : null;
+        let msg = "";
+        if(as === "") msg = "Serve un nome";
+        else if(as && mine.has(as.toLowerCase())) msg = `Hai già il tag "${mine.get(as.toLowerCase())}": i balli verranno aggiunti al tuo. Rinominalo per tenerlo separato.`;
+        else if(as && chosenNames.filter(n => n === as.toLowerCase()).length > 1) msg = "Stesso nome di un altro tag ricevuto: verranno uniti.";
+        warn.textContent = msg;
+        warn.classList.toggle("hidden", !msg);
+        row.classList.toggle("merging", !!msg && as !== "");
+      });
+      const yes = li.querySelector(".inboxFoot .primary");
+      if(yes){
+        const invalid = [...picked.values()].some(v => !cleanTagName(v));
+        yes.disabled = picked.size === 0 || invalid;
+        yes.textContent = picked.size === r.tags.length
+          ? (r.tags.length === 1 ? "Aggiungi ai miei tag" : "Aggiungi tutti ai miei tag")
+          : `Aggiungi ${picked.size} ai miei tag`;
+      }
+    };
     r.tags.forEach(t => {
-      const row = document.createElement(pickable ? "label" : "div");
+      const row = document.createElement("div");
       row.className = "inboxTagRow";
+      row.dataset.name = t.name;
+      const n = document.createElement("span");
+      n.className = "muted inboxTagCount";
+      n.textContent = t.dances === 1 ? "1 ballo" : `${t.dances} balli`;
       if(pickable){
         const cb = document.createElement("input");
         cb.type = "checkbox";
         cb.checked = true;
+        cb.setAttribute("aria-label", `Accetta il tag ${t.name}`);
+        const name = document.createElement("input");
+        name.type = "text";
+        name.className = "inboxTagName";
+        name.value = t.name;
+        name.maxLength = 40;
+        name.style.setProperty("--chip", t.color);
+        name.setAttribute("aria-label", `Nome con cui salvare il tag ${t.name}`);
         cb.addEventListener("change", ()=>{
-          if(cb.checked) picked.add(t.name); else picked.delete(t.name);
-          const yes = li.querySelector(".inboxFoot .primary");
-          if(yes){
-            yes.disabled = picked.size === 0;
-            yes.textContent = picked.size === r.tags.length ? "Aggiungi tutti ai miei tag" : `Aggiungi ${picked.size} ai miei tag`;
-          }
+          if(cb.checked) picked.set(t.name, name.value); else picked.delete(t.name);
+          name.disabled = !cb.checked;
+          refresh();
         });
-        row.appendChild(cb);
+        name.addEventListener("input", ()=>{
+          if(cb.checked) picked.set(t.name, name.value);
+          refresh();
+        });
+        const warn = document.createElement("div");
+        warn.className = "inboxWarn hidden";
+        row.append(cb, name, n, warn);
+      } else {
+        row.append(makeChip({ name: t.name, color: t.color }), n);
       }
-      row.appendChild(makeChip({ name: t.name, color: t.color }));
-      const n = document.createElement("span");
-      n.className = "muted";
-      n.textContent = t.dances === 1 ? "1 ballo" : `${t.dances} balli`;
-      row.appendChild(n);
       tagBox.appendChild(row);
     });
+    if(pickable) setTimeout(refresh);
     li.append(head, tagBox);
 
     if(r.message){
@@ -1582,7 +1657,7 @@ function renderInbox(){
       yes.type = "button";
       yes.className = "primary";
       yes.textContent = r.tags.length === 1 ? "Aggiungi ai miei tag" : "Aggiungi tutti ai miei tag";
-      yes.addEventListener("click", ()=> respondShare(r.id, true, yes, [...picked]));
+      yes.addEventListener("click", ()=> respondShare(r.id, true, yes, [...picked].map(([name, as]) => ({ name, as: cleanTagName(as) }))));
       const no = document.createElement("button");
       no.type = "button";
       no.className = "ghost";
@@ -1602,10 +1677,10 @@ function renderInbox(){
   });
 }
 
-async function respondShare(id, accept, btn, names){
+async function respondShare(id, accept, btn, items){
   btn.disabled = true;
   try{
-    const r = await api(`${SHARES}?action=respond`, { method: "POST", body: JSON.stringify({ id, accept, names }) });
+    const r = await api(`${SHARES}?action=respond`, { method: "POST", body: JSON.stringify({ id, accept, items }) });
     if(accept){
       const hadTagFilter = tagState.filter.size > 0;
       setTagData(await api(TAGS));
@@ -2216,80 +2291,6 @@ function wireYouTubeButtons(){
   });
 }
 
-function wireStepsheetModal(){
-  const link = $("stepsheetLink");
-  const modal = $("stepsheetModal");
-  const frame = $("stepsheetFrame");
-  const closeBtn = $("stepsheetClose");
-  const openNew = $("stepsheetOpenNew");
-  if(!link || !modal || !frame || !closeBtn || !openNew) return;
-
-  function openModal(url){
-    if(!url) return;
-    frame.src = url;
-    openNew.href = url;
-    modal.classList.remove("hidden");
-  }
-  function closeModal(){
-    modal.classList.add("hidden");
-    frame.src = "about:blank";
-  }
-  function openPdfWindow(url){
-    if(!url) return;
-    const width = 1100;
-    const height = 760;
-    const left = Math.max(0, Math.floor((window.screen.width - width) / 2));
-    const top = Math.max(0, Math.floor((window.screen.height - height) / 2));
-    const features = [
-      "popup=yes",
-      "noopener",
-      "noreferrer",
-      "toolbar=no",
-      "menubar=no",
-      "location=no",
-      "status=no",
-      "scrollbars=yes",
-      "resizable=yes",
-      `width=${width}`,
-      `height=${height}`,
-      `left=${left}`,
-      `top=${top}`,
-    ].join(",");
-    const w = window.open(url, "stepsheetPdf", features);
-    if(w) w.focus();
-  }
-  function isPdfUrl(url){
-    try{
-      const u = new URL(url);
-      return u.pathname.toLowerCase().endsWith(".pdf");
-    }catch{
-      return url.toLowerCase().split("?")[0].endsWith(".pdf");
-    }
-  }
-
-  link.addEventListener("click", (e)=>{
-    if(!state.stepsheetUrl) return;
-    e.preventDefault();
-    if(isPdfUrl(state.stepsheetUrl)){
-      closeModal();
-      openPdfWindow(state.stepsheetUrl);
-      return;
-    }
-    openModal(state.stepsheetUrl);
-  });
-  closeBtn.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e)=>{
-    if(e.target && e.target.dataset && e.target.dataset.close){
-      closeModal();
-    }
-  });
-  document.addEventListener("keydown", (e)=>{
-    if(e.key === "Escape" && !modal.classList.contains("hidden")){
-      closeModal();
-    }
-  });
-}
-
 async function getDataMode(){
   try{
     const res = await fetch("./data-mode.json", {cache:"no-store"});
@@ -2333,7 +2334,6 @@ async function init(){
 
   wireKeyboardNav();
   wireYouTubeButtons();
-  wireStepsheetModal();
   wireAuth();
   wireTags();
   wireSocial();
